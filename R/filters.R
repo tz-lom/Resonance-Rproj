@@ -24,7 +24,7 @@ pipe.FFTFilter <- function(input, choose){
   bp <- block.processor(input, type="channels", size=1)
   
   window <- input$size
-  channels <- unique(choose$ch)
+  channels <- unique(choose$channel)
   freq <- c()
   # @todo: fix window-base frequency relation
   for(i in 1:nrow(choose)){
@@ -38,12 +38,12 @@ pipe.FFTFilter <- function(input, choose){
   
   bp$channels <- length(freq)
   
+  prealloc <- matrix(0.0, ncol=length(channels), nrow=window)
+    
   input$connect(function(db){
-    data <- db[,channels, drop=F]
+    copyColumns(prealloc, db, channels)
     
-    spectre <- apply(data, 2, fft)
-    
-    
+    spectre <- mvfft(prealloc)
     ret <- matrix(Mod(spectre[freq])/window, nrow=1)
     
     bp$emit(DataBlock(ret, db))
@@ -137,8 +137,8 @@ pipe.applyFilter <- function(input, filt){
     flen <- length(unclass(filt))-1
   }
   
-  init.x <- matrix(0, ncol=input$channels, nrow=flen)
-  init.y <- init.x
+  init.x <- matrix(0.0, ncol=input$channels, nrow=flen)
+  init.y <- matrix(0.0, ncol=input$channels, nrow=flen)
   
   input$connect(function(db){
     result = matrix(0, ncol = ncol(db), nrow = nrow(db))
@@ -146,8 +146,8 @@ pipe.applyFilter <- function(input, filt){
       result[,i] <- filter(filt, db[,i], init.x=init.x[,i], init.y=init.y[,i])
     }
     
-    init.x <<- tail(rbind(init.x, db), flen, addrownums = F)
-    init.y <<- tail(rbind(init.y, result), flen, addrownums = F)
+    push_slice_rows_back(init.x, db, nrow(db)-flen, flen)
+    push_slice_rows_back(init.y, result, nrow(result)-flen, flen)
     
     bp$emit(DataBlock(result, db))
   })

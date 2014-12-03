@@ -167,8 +167,25 @@ void rowsCopy(NumericMatrix dest, int destBegin, NumericMatrix src, int srcBegin
   }
 }
 
+// [[Rcpp::export]]
+void copyColumns(NumericMatrix dest, NumericMatrix src, IntegerVector cols)
+{
+  if(dest.ncol()!=cols.length()) stop("dest must have columns equal to cols length");
+  if(dest.nrow()!=src.nrow()) stop("src and dest must have equal number of rows");
+  int nRow = dest.nrow()-1;
+  
+  for(int col=cols.length()-1; col>=0; --col)
+  {
+    int targ = cols[col]-1;
+    for(int row=nRow; row>=0; --row)
+    {
+      dest(row, col) = src(row, targ);
+    }
+  }
+}
+
 /* [Rcpp::export]]
-SEXP DataBlock(SEXP something, SEXP timestamp)
+SEXP DataBlock(SEXP something, NumericVector timestamp)
 {
   if(className.attr("class")=="integer64")
   {

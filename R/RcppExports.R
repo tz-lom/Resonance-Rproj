@@ -25,3 +25,7 @@ rowsCopy <- function(dest, destBegin, src, srcBegin, srcSize) {
     invisible(.Call('Resonance_rowsCopy', PACKAGE = 'Resonance', dest, destBegin, src, srcBegin, srcSize))
 }
 
+copyColumns <- function(dest, src, cols) {
+    invisible(.Call('Resonance_copyColumns', PACKAGE = 'Resonance', dest, src, cols))
+}
+

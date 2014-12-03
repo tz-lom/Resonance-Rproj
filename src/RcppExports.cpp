@@ -90,3 +90,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// copyColumns
+void copyColumns(NumericMatrix dest, NumericMatrix src, IntegerVector cols);
+RcppExport SEXP Resonance_copyColumns(SEXP destSEXP, SEXP srcSEXP, SEXP colsSEXP) {
+BEGIN_RCPP
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP );
+        Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP );
+        Rcpp::traits::input_parameter< IntegerVector >::type cols(colsSEXP );
+        copyColumns(dest, src, cols);
+    }
+    return R_NilValue;
+END_RCPP
+}

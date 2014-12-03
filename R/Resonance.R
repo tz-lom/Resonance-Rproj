@@ -3,7 +3,12 @@
 
 globals <- new.env()
 
-globals$queue <- list()                                          
+globals$queue <- list()   
+globals$compileCallbacks <- TRUE
+
+compileCallbacks <- function(bool=TRUE){
+  globals$compileCallbacks <- any(bool)
+}
 
 addToQueue = function(cmd, ...){
   globals$queue <- append(globals$queue, list(list(
@@ -11,6 +16,8 @@ addToQueue = function(cmd, ...){
     args = list(...)
     )))
 }
+
+
 
 popQueue <- function(){
   ret <- globals$queue
@@ -141,13 +148,10 @@ block.processor <- function(.firstArg, ...){
   
   bp$connect <- function(cb){
     if(is.null(callback)){
-      callback <<- cb #cmpfun(cb,options = list(optimize=3, suppressAll=F, suppressUndefined=F))
+      callback <<- if(globals$compileCallbacks) cmpfun(cb,options = list(optimize=3)) else cb
     }else{
       snap <- callback
-      callback <<- cmpfun(function(data){
-        cb(data);
-        snap(data);
-      })
+      callback <<- cmpfun(function(data){ cb(data); snap(data); }, options=list(optimize=3))
     }
   }
   

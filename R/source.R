@@ -1,5 +1,7 @@
 source.channels <- function(data, samplingRate, blockSize, timestamps=NULL){
   data <- as.matrix(data)
+  if(blockSize==-1) blockSize <- nrow(data)
+  
   bp <- block.processor('channels', samplingRate=samplingRate, channels=ncol(data))
   
   if(is.null(timestamps)){
