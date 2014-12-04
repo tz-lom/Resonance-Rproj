@@ -112,7 +112,7 @@ test_that("applyFilter", {
     o2 <- rbind(o2, out$last_received())
   }
 
-  expect_equal(o1,o2)
+  expect_equal(o1,o2,check.attributes=F)
 })
 
 test_that("simulationSource", {

@@ -146,8 +146,13 @@ pipe.applyFilter <- function(input, filt){
       result[,i] <- filter(filt, db[,i], init.x=init.x[,i], init.y=init.y[,i])
     }
     
-    push_slice_rows_back(init.x, db, nrow(db)-flen, flen)
-    push_slice_rows_back(init.y, result, nrow(result)-flen, flen)
+    if(nrow(db)<flen){
+      push_slice_rows_back(init.x, db, 0, nrow(db))
+      push_slice_rows_back(init.y, result, 0, nrow(result))
+    }else{
+      push_slice_rows_back(init.x, db, nrow(db)-flen, flen)
+      push_slice_rows_back(init.y, result, nrow(result)-flen, flen)
+    }
     
     bp$emit(DataBlock(result, db))
   })
