@@ -1,4 +1,4 @@
-read.par.mat <- function(filename, eegfile)
+read.par.mat <- function(filename)
 {
   params <- readMat(filename)$params
   names(params) <- sprintf("%s", attr(params, 'dimnames')[[1]])
@@ -15,19 +15,6 @@ read.par.mat <- function(filename, eegfile)
   
   t <- fixDur / 1000 * sRate
   
-  ch <- to.channels(input(1))
-  # reference
-  p1 <- pipe.references(ch, c(A1,A2))
-  # online centering with std devision
-  p2 <- pipe.centering(p1, 500)
-  # decimation
-  p3 <- pipe.decimate(p2, 1, 20 , coef_10000_to_500)
-  
-  #windowize
-  p4 <- cross.windowizeByEvents(p3, input(2), t)
-  
-  output(1)$connect(p2)
-  
   #res
   dump(c("W", "th", "ufeats", "A1", "A2", "fixDur", "sRate",
          "t"), file = "")
@@ -35,7 +22,9 @@ read.par.mat <- function(filename, eegfile)
       "p1 <- pipe.references(ch, c(A1,A2))", "\n",
       "p2 <- pipe.centering(p1, 500)", "\n",
       "p3 <- pipe.decimate(p2, 1, 20 , coef_10000_to_500)", "\n",
-      "output(1)$connect(p2)", "\n")
+      "p4 <- cross.windowizeByEvents(p3, input(2), t)", "\n",
+      "p5 <- pipe.trof.classifier(p4, W, th, ufeats )", "\n",
+      "output(1)$connect(p5)", "\n")
   
   
 }
@@ -84,6 +73,8 @@ pipe.trof.classifier <- function(input, W, th, ufeats)
     if( Q < th){
       bp$emit(DataBlock(T, db))
     }
+    
+    bp
     
   })
   
