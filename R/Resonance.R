@@ -40,7 +40,7 @@ registerInput <- function(name, channels, samplingRate){
   globals$inputStreams <- append(globals$inputStreams, list(bp))
 }
 
-createOutput <- function(name, type, input){
+createOutput <- function(name, input){
   bp <- switch(input$type,
     'channels' = list(
       samplingRate = input$samplingRate,
@@ -53,12 +53,12 @@ createOutput <- function(name, type, input){
     'window' = list(
       samplingRate = input$samplingRate,
       channels = input$channels,
-      )
+    ),
+    'event' = list()
   )
   
   
   bp$name <- name;
-  bp$typeName <- type;
   bp$type <- 'output';
   
   id = length(globals$outputStreams)+1
@@ -72,7 +72,7 @@ createOutput <- function(name, type, input){
   addToQueue("createOutputStream",
              id = id,
              name = name,
-             typeName = type,
+             typeName = input$type,
              samplingRate = bp$samplingRate,
              channels = bp$channels
   )
