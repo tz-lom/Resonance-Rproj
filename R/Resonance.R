@@ -33,8 +33,8 @@ clearStreams <- function(){
   globals$outputStreams <- list()
 }
 
-registerInput <- function(name, channels, samplingRate){
-  bp <- block.processor("input", channels=channels, samplingRate=samplingRate, name=name)
+registerInput <- function(name, type, channels, samplingRate){
+  bp <- block.processor(type, channels=channels, samplingRate=samplingRate, name=name)
   
   class(bp) <- c("block.processor","stream.input")
   globals$inputStreams <- append(globals$inputStreams, list(bp))
@@ -54,7 +54,7 @@ createOutput <- function(name, input){
       samplingRate = input$samplingRate,
       channels = input$channels,
     ),
-    'event' = list()
+    'message' = list()
   )
   
   
