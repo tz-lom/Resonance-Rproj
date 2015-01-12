@@ -1,8 +1,8 @@
 calcCSP <- function(A,B){
-  tmp <- A %*% t(A)
+  tmp <- t(A) %*% A
   RA <- tmp/sum(diag(tmp))
   
-  tmp <- B %*% t(B)
+  tmp <- t(B) %*% B
   RB <- tmp/sum(diag(tmp))
   
   Rsum <- RA+RB;

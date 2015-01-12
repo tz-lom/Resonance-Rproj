@@ -29,3 +29,7 @@ copyColumns <- function(dest, src, cols) {
     invisible(.Call('Resonance_copyColumns', PACKAGE = 'Resonance', dest, src, cols))
 }
 
+blockLevelRead <- function(fname) {
+    .Call('Resonance_blockLevelRead', PACKAGE = 'Resonance', fname)
+}
+
