@@ -43,7 +43,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000){
     time <- attr(db,'timestamp')
     # recalc time to samples
     
-    gs <<- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize
+    gs <- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize
     
     grabSampleQueue <<- sort(c(grabSampleQueue, gs))
     
