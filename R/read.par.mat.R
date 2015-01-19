@@ -58,7 +58,7 @@ pipe.centering <- function(input, bufferSize)
 #' @return Constructed pipe
 pipe.trof.classifier <- function(input, W, th, ufeats)
 {
-  bp <- block.processor(input)
+  bp <- block.processor("message")
   
   input$connect(function(db){
     X <- rep(0, dim(ufeats)[[1]])
@@ -73,9 +73,6 @@ pipe.trof.classifier <- function(input, W, th, ufeats)
     if( Q < th){
       bp$emit(DataBlock(T, db))
     }
-    
-    bp
-    
   })
   
   bp
