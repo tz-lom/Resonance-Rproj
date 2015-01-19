@@ -1,2 +1,2 @@
 PKG_LIBS= -lkj -lcapnp
-PKG_CXXFLAGS= "-std=c++11"
+PKG_CXXFLAGS= "-std=c++0x"

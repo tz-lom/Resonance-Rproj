@@ -14,17 +14,18 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000){
   
   lastTS <- NA
   lastSample <- 0
-  grabSample <- Inf
+  grabSampleQueue <- c(Inf)
   
   ifWindowReady <- function(){
-    if(grabSample <= lastSample){
-      last <- nrow(backBuffer)-(lastSample-grabSample)
+    if(grabSampleQueue[[1]] <= lastSample){
+      last <- nrow(backBuffer)-(lastSample-grabSampleQueue[[1]])
       block <- backBuffer[ (last-windowSize+1):last,, drop=F]
-      ts <- lastTS - (lastSample-grabSample)*1E9/data$samplingRate
+      ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
       
       bp$emit(DataBlock(block, ts))
       
-      grabSample <<- Inf
+      grabSampleQueue <<- grabSampleQueue[2:length(grabSampleQueue)]
+      ifWindowReady()
     }
   }
   
@@ -41,8 +42,11 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000){
   events$connect(function(db){
     time <- attr(db,'timestamp')
     # recalc time to samples
-     
-    grabSample <<- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize
+    
+    gs <<- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize
+    
+    grabSampleQueue <<- sort(c(grabSampleQueue, gs))
+    
     ifWindowReady()
   })
   

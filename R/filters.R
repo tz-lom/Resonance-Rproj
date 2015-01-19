@@ -164,7 +164,7 @@ pipe.applyFilter <- function(input, filt){
 pipe.decimate <- function(input, inc, dec, coef){  
   input$type=='channels' || stop('Must be channels in input')
   
-  bp <- block.processor(input)
+  bp <- block.processor(input, samplingRate=input$samplingRate*inc/dec)
   
   decs <- list()
   

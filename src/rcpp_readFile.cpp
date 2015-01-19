@@ -17,8 +17,8 @@ List blockLevelRead(std::string fname)
     R2EReader reader(fname.c_str());
   
     List out;
-    
-    while(auto block = reader.nextItem())
+    auto block = reader.nextItem();
+    while(block!=0)
     {
       auto item = block->getRoot<FileItem>();
       if(item.isStream())
@@ -38,14 +38,14 @@ List blockLevelRead(std::string fname)
         auto datablock = item.getDataBlock();
         int stream = datablock.getStream();
         auto sdb = datablock.getBlock();
-        auto created = sdb.getCreated();
-        auto received = sdb.getReceived();
+        long long created = sdb.getCreated();
+        long long received = sdb.getReceived();
         
         NumericVector createdExp = NumericVector::create(0);
-        createdExp[0] = *((double*)&created);
+        *((long long*)&createdExp[0]) = created;
         createdExp.attr("class") = "integer64";
         NumericVector receivedExp = NumericVector::create(0);
-        receivedExp[0] = *((double*)&received);
+        *((long long*)&receivedExp[0]) = received;
         receivedExp.attr("class") = "integer64";
         
         if(sdb.which() == StreamedBlock::DOUBLE)
@@ -76,6 +76,15 @@ List blockLevelRead(std::string fname)
           db.attr("stream") = stream;
           out.push_back(db);
         }
+      }
+      try
+      {
+        block = reader.nextItem();
+      }
+      catch(...)
+      {
+        //WARNING("Wuz errorz while reading");
+        block = 0;
       }
     }
     

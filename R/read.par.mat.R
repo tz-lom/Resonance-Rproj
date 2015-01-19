@@ -40,8 +40,8 @@ pipe.centering <- function(input, bufferSize)
   buffer <- matrix(0.0, ncol=input$channels, nrow=bufferSize)
   
   input$connect(function(db){
-    buffer[1:(bufferSize-nrow(db)),] <<- buffer[nrow(db):bufferSize,]
-    buffer[(bufferSize-nrow(db)): bufferSize,] <<- db
+    buffer[1:(bufferSize-nrow(db)),] <<- buffer[(nrow(db)+1):bufferSize,]
+    buffer[(bufferSize-nrow(db)+1): bufferSize,] <<- db
     
     bp$emit( DataBlock(db - colMeans(buffer), db) )
   })
@@ -68,7 +68,7 @@ pipe.trof.classifier <- function(input, W, th, ufeats)
       ch <- ufeats[i, 2]
       X[i] <- db[ts, ch]
     }
-    Q = X * W
+    Q = X %*% W
     
     if( Q < th){
       bp$emit(DataBlock(T, db))
@@ -78,4 +78,5 @@ pipe.trof.classifier <- function(input, W, th, ufeats)
     
   })
   
+  bp
 }
