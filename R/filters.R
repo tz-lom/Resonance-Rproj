@@ -52,6 +52,25 @@ pipe.FFTFilter <- function(input, choose){
   bp
 }
 
+#' Extracts spectrograms for windows
+#'
+#' @param input Input pipe
+#' @param choose DataFrame with columns 'channel' and 'frequency' 
+#' @return Row where each element corresponds to row from choose and equals to power of channel
+pipe.spectrogram <- function(input){
+  input$type=="window" || stop("FFT filter must receive window")
+  
+  # parce channelsAndFrequencies
+  bp <- block.processor(input, type="window", size=input$size, channels=input$channels)
+    
+  input$connect(function(db){    
+    spectre <- mvfft(db)
+    bp$emit(DataBlock(Mod(spectre)/input$size, db))
+  })
+  
+  bp
+}
+
 pipe.windowizer <- function(input, size, shift){
   size>0 || stop("size must be greater than 0")
   shift>0 || stop("shift must be greater than 0")

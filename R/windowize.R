@@ -5,10 +5,10 @@
 #' @param windowSize Size of resulting window
 #' @param backBuffer Size of buffer for data, may be increased in case of big delay in events arrival
 #' @return pipe with type=window
-cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000){
-  bp <- block.processor(data, type="window", size=windowSize)
+cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, shift=0){
+  bp <- block.processor(data, type="window", size=windowSize, channels=data$channels)
   
-  backBuffer <- max(backBuffer, windowSize*2)
+  backBuffer <- max(backBuffer, (windowSize+abs(shift))*2)
   
   backBuffer <- matrix(NA, ncol=data$channels, nrow=backBuffer)
   
@@ -19,7 +19,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000){
   ifWindowReady <- function(){
     if(grabSampleQueue[[1]] <= lastSample){
       last <- nrow(backBuffer)-(lastSample-grabSampleQueue[[1]])
-      block <- backBuffer[ (last-windowSize+1):last,, drop=F]
+      block <- backBuffer[ (last-windowSize+1+shift):last,, drop=F]
       ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
       
       bp$emit(DataBlock(block, ts))
@@ -43,7 +43,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000){
     time <- attr(db,'timestamp')
     # recalc time to samples
     
-    gs <- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize
+    gs <- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize + shift
     
     grabSampleQueue <<- sort(c(grabSampleQueue, gs))
     

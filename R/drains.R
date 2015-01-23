@@ -26,6 +26,34 @@ drain.channelsRecorder <- function(input){
   }
 }
 
+#' Terminating pipe that records windows to one big buffer.
+#' 
+#' @param input Input stream.
+#' @return function that returns recorded signal
+drain.windowRecorder <- function(input){
+  (input$type=='window') || stop('input type must be window')
+  
+  pointer <- 0L
+  buffer <- array(0.0, dim=c(input$size, input$channels, 2^5))
+  
+  input$connect(function(db){
+    if(nrow(db)+pointer >= nrow(buffer))
+    {
+      #perform realloc
+      tmp <- array(0.0, dim=c(input$size, input$channels, dim(buffer)[3]*1.5))
+      tmp[,,1:dim(buffer)[3]] <- buffer
+      buffer <<- tmp
+    }
+    buffer[,, pointer] <<- db
+    pointer <<- pointer+1
+  })
+  
+  # return accessor for recorded data
+  function(){
+    buffer[,, 1:(pointer)]
+  }
+}
+
 #' Stores data as DataBlocks
 #' 
 #' Usefull for debugging and testing purposes.
