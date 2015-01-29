@@ -1,4 +1,4 @@
-cross.epochByEvent <- function(input, events){
+cross.epochByEvent <- function(input, events, shiftT=0, shiftF=0){
   signal <- matrix(0.0, nrow = 2^5, ncol = input$channels)
   pointer <- 0L
   si.times <- c()
@@ -28,7 +28,16 @@ cross.epochByEvent <- function(input, events){
     
     if(!is.null(events))
     {
-      evs <<- c(evs, events)
+      evs <<- c(evs, 
+                lapply(events, function(e){
+                  if(e$type){
+                    e$time <- e$time+shiftT
+                  } else {
+                    e$time <- e$time+shiftF
+                  }
+                  e
+                })
+                )
     }
     
       
