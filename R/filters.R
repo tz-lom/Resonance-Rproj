@@ -117,24 +117,20 @@ pipe.linearApproximation <- function(input, filters){
     
     ret <- sapply(filters, function(filter){
       channel <- data[,filter[[1]]]            
-      ret <- sapply(channel, function(val){
-        lV <- hV <- lP <- hP <-0
-        for(point in filter[2:length(filter)]){
-          if(val>point[[1]]){
-            lP <- point[[1]]
-            lV <- point[[2]]
-          } else {
-            hP <- point[[1]]
-            hV <- point[[2]]
-            break;
-          }
-        }
-        if(hP-lP==0){
-          return(lV)
-        } else {
-          return((hV-lV)/(hP-lP)*(val-lP)+lV);
-        }
-      })
+      
+      pairs <- simplify2array(filter[2:length(filter)])
+      
+      
+      pairs <- cbind(
+        
+        as.matrix(c(-Inf, round(pairs[2,1]))),
+        
+        pairs,
+        
+        as.matrix(c(Inf, round(pairs[2,ncol(pairs)])))
+      )
+      
+      interp1(pairs[1,], pairs[2, ],channel)
     })
     
     

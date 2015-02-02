@@ -15,7 +15,8 @@ Imports:
     signal (>= 0.7),
     bit64 (>= 0.9),
     compiler,
-    bcidat
+    bcidat,
+    pracma
 LinkingTo: Rcpp
 VignetteBuilder: knitr
 
