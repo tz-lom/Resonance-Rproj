@@ -5,6 +5,8 @@ import(signal)
 import(geigen)
 import(bit64)
 importFrom(compiler, cmpfun)
+importFrom(pracma, interp1)
+
 export("DataBlock")
 export("block.processor")
 export("input")
