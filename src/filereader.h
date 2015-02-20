@@ -15,7 +15,7 @@ class R2EReader
 public:
     R2EReader(const char *fileName);
 
-    capnp::PackedMessageReader *nextItem();
+    ::capnp::MessageReader *nextItem();
 
 private:
     FileInputStream file;

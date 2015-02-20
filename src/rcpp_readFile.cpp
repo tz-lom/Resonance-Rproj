@@ -77,13 +77,14 @@ List blockLevelRead(std::string fname)
           out.push_back(db);
         }
       }
+      delete block;
       try
       {
         block = reader.nextItem();
       }
       catch(...)
       {
-        //WARNING("Wuz errorz while reading");
+        Rf_warning("Wuz errorz while reading");
         block = 0;
       }
     }

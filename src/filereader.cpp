@@ -1,7 +1,6 @@
 #include "filereader.h"
 #include <capnp/serialize.h>
 #include "io.h"
-#include <capnp/serialize-packed.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -20,7 +19,7 @@ R2EReader::R2EReader(const char *fileName):
     {
         throw std::logic_error("Wrong header");
     }
-    capnp::PackedMessageReader reader(in);
+    capnp::InputStreamMessageReader reader(in);
     FileHeader::Reader header = reader.getRoot<FileHeader>();
     if(header.getVersion()> 1)
     {
@@ -28,11 +27,11 @@ R2EReader::R2EReader(const char *fileName):
     }
 }
 
-capnp::PackedMessageReader* R2EReader::nextItem()
+::capnp::MessageReader* R2EReader::nextItem()
 {
     while (in.tryGetReadBuffer() != nullptr)
     {
-        return new capnp::PackedMessageReader(in);
+        return new ::capnp::InputStreamMessageReader(in);
     }
     return 0;
 }
