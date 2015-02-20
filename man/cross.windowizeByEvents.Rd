@@ -3,7 +3,8 @@
 \alias{cross.windowizeByEvents}
 \title{Split data stream to windows using event stream}
 \usage{
-cross.windowizeByEvents(data, events, windowSize, backBuffer = 10000)
+cross.windowizeByEvents(data, events, windowSize, backBuffer = 10000,
+  shift = 0)
 }
 \arguments{
 \item{data}{Data stream}
