@@ -221,6 +221,8 @@ public:
 
   inline  ::uint64_t getTimestamp() const;
 
+  inline bool getPacked() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -254,6 +256,9 @@ public:
 
   inline  ::uint64_t getTimestamp();
   inline void setTimestamp( ::uint64_t value);
+
+  inline bool getPacked();
+  inline void setPacked(bool value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -1171,6 +1176,20 @@ inline  ::uint64_t FileHeader::Builder::getTimestamp() {
 inline void FileHeader::Builder::setTimestamp( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       1 * ::capnp::ELEMENTS, value);
+}
+
+inline bool FileHeader::Reader::getPacked() const {
+  return _reader.getDataField<bool>(
+      32 * ::capnp::ELEMENTS);
+}
+
+inline bool FileHeader::Builder::getPacked() {
+  return _builder.getDataField<bool>(
+      32 * ::capnp::ELEMENTS);
+}
+inline void FileHeader::Builder::setPacked(bool value) {
+  _builder.setDataField<bool>(
+      32 * ::capnp::ELEMENTS, value);
 }
 
 inline  ::uint64_t DataBlockDouble::Reader::getTimestamp() const {

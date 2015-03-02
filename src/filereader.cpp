@@ -21,15 +21,16 @@ R2EReader::R2EReader(const char *fileName):
     }
     capnp::InputStreamMessageReader reader(in);
     FileHeader::Reader header = reader.getRoot<FileHeader>();
-    if(header.getVersion()> 1)
+    if(header.getVersion()> 2)
     {
         throw std::logic_error("File has newer version than supported");
     }
+    packed = header.getPacked();
 }
 
 ::capnp::MessageReader* R2EReader::nextItem()
 {
-    while (in.tryGetReadBuffer() != nullptr)
+    while(in.tryGetReadBuffer() != nullptr)
     {
         return new ::capnp::InputStreamMessageReader(in);
     }

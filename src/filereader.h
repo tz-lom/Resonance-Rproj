@@ -20,6 +20,7 @@ public:
 private:
     FileInputStream file;
     ::kj::BufferedInputStreamWrapper in;
+    bool packed;
 };
 
 }
