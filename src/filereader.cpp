@@ -1,6 +1,6 @@
 #include "filereader.h"
 #include <capnp/serialize.h>
-#include "io.h"
+#include "fileio.h"
 #include <iostream>
 #include <stdexcept>
 

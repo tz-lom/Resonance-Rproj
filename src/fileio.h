@@ -1,5 +1,5 @@
-#ifndef IO_H
-#define IO_H
+#ifndef FILEIO_H
+#define FILEIO_H
 
 #include <kj/io.h>
 #include <stdio.h>

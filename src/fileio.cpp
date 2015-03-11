@@ -1,4 +1,4 @@
-#include "io.h"
+#include "fileio.h"
 #include <cstdint>
 
 using namespace Resonance::R2E;
@@ -24,9 +24,6 @@ void FileOutputStream::write(const void *buffer, size_t size)
     {
         wr += fwrite(pos, 1, end-pos, fd);
     }
-
-    std::cout << "write: " << size << "\n";
-
 
 }
 
@@ -59,8 +56,6 @@ size_t FileInputStream::tryRead(void *buffer, size_t minBytes, size_t maxBytes)
     }
 
     size_t r = pos - reinterpret_cast<uint8_t*>(buffer);
-
-    std::cout << "read: " << minBytes << " - " << maxBytes << "  " << r << "\n";
 
     return r;
 }
