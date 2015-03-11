@@ -9,27 +9,21 @@ using namespace Rcpp;
 NumericMatrix forceCopy(NumericMatrix m);
 RcppExport SEXP Resonance_forceCopy(SEXP mSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP );
-        NumericMatrix __result = forceCopy(m);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP);
+    __result = Rcpp::wrap(forceCopy(m));
+    return __result;
 END_RCPP
 }
 // shiftRows
 void shiftRows(NumericMatrix m, int shift);
 RcppExport SEXP Resonance_shiftRows(SEXP mSEXP, SEXP shiftSEXP) {
 BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP );
-        Rcpp::traits::input_parameter< int >::type shift(shiftSEXP );
-        shiftRows(m, shift);
-    }
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type shift(shiftSEXP);
+    shiftRows(m, shift);
     return R_NilValue;
 END_RCPP
 }
@@ -37,12 +31,10 @@ END_RCPP
 void pushRows_bottom(NumericMatrix m, NumericMatrix p);
 RcppExport SEXP Resonance_pushRows_bottom(SEXP mSEXP, SEXP pSEXP) {
 BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP );
-        pushRows_bottom(m, p);
-    }
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP);
+    pushRows_bottom(m, p);
     return R_NilValue;
 END_RCPP
 }
@@ -50,12 +42,10 @@ END_RCPP
 void pushRows_top(NumericMatrix m, NumericMatrix p);
 RcppExport SEXP Resonance_pushRows_top(SEXP mSEXP, SEXP pSEXP) {
 BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP );
-        pushRows_top(m, p);
-    }
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type m(mSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP);
+    pushRows_top(m, p);
     return R_NilValue;
 END_RCPP
 }
@@ -63,14 +53,12 @@ END_RCPP
 void push_slice_rows_back(NumericMatrix dest, NumericMatrix src, int slicePos, int sliceSize);
 RcppExport SEXP Resonance_push_slice_rows_back(SEXP destSEXP, SEXP srcSEXP, SEXP slicePosSEXP, SEXP sliceSizeSEXP) {
 BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP );
-        Rcpp::traits::input_parameter< int >::type slicePos(slicePosSEXP );
-        Rcpp::traits::input_parameter< int >::type sliceSize(sliceSizeSEXP );
-        push_slice_rows_back(dest, src, slicePos, sliceSize);
-    }
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP);
+    Rcpp::traits::input_parameter< int >::type slicePos(slicePosSEXP);
+    Rcpp::traits::input_parameter< int >::type sliceSize(sliceSizeSEXP);
+    push_slice_rows_back(dest, src, slicePos, sliceSize);
     return R_NilValue;
 END_RCPP
 }
@@ -78,15 +66,13 @@ END_RCPP
 void rowsCopy(NumericMatrix dest, int destBegin, NumericMatrix src, int srcBegin, int srcSize);
 RcppExport SEXP Resonance_rowsCopy(SEXP destSEXP, SEXP destBeginSEXP, SEXP srcSEXP, SEXP srcBeginSEXP, SEXP srcSizeSEXP) {
 BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP );
-        Rcpp::traits::input_parameter< int >::type destBegin(destBeginSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP );
-        Rcpp::traits::input_parameter< int >::type srcBegin(srcBeginSEXP );
-        Rcpp::traits::input_parameter< int >::type srcSize(srcSizeSEXP );
-        rowsCopy(dest, destBegin, src, srcBegin, srcSize);
-    }
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP);
+    Rcpp::traits::input_parameter< int >::type destBegin(destBeginSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP);
+    Rcpp::traits::input_parameter< int >::type srcBegin(srcBeginSEXP);
+    Rcpp::traits::input_parameter< int >::type srcSize(srcSizeSEXP);
+    rowsCopy(dest, destBegin, src, srcBegin, srcSize);
     return R_NilValue;
 END_RCPP
 }
@@ -94,13 +80,11 @@ END_RCPP
 void copyColumns(NumericMatrix dest, NumericMatrix src, IntegerVector cols);
 RcppExport SEXP Resonance_copyColumns(SEXP destSEXP, SEXP srcSEXP, SEXP colsSEXP) {
 BEGIN_RCPP
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP );
-        Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP );
-        Rcpp::traits::input_parameter< IntegerVector >::type cols(colsSEXP );
-        copyColumns(dest, src, cols);
-    }
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericMatrix >::type dest(destSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type src(srcSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type cols(colsSEXP);
+    copyColumns(dest, src, cols);
     return R_NilValue;
 END_RCPP
 }
@@ -108,14 +92,10 @@ END_RCPP
 List blockLevelRead(std::string fname);
 RcppExport SEXP Resonance_blockLevelRead(SEXP fnameSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< std::string >::type fname(fnameSEXP );
-        List __result = blockLevelRead(fname);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< std::string >::type fname(fnameSEXP);
+    __result = Rcpp::wrap(blockLevelRead(fname));
+    return __result;
 END_RCPP
 }
