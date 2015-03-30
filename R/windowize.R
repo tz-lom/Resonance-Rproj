@@ -15,6 +15,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, 
   lastTS <- NA
   lastSample <- 0
   grabSampleQueue <- c(Inf)
+  windowizationNotice <- list()
   
   ifWindowReady <- function(){
     if(grabSampleQueue[[1]] <= lastSample){
@@ -22,9 +23,12 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, 
       block <- backBuffer[ (last-windowSize+1):last,, drop=F]
       ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
       
+      attr(block, 'windowizationEvent') <- windowizationNotice[[1]]
+      
       bp$emit(DataBlock(block, ts))
       
       grabSampleQueue <<- grabSampleQueue[2:length(grabSampleQueue)]
+      windowizationNotice <<- windowizationNotice[2:length(windowizationNotice)]
       ifWindowReady()
     }
   }
@@ -45,7 +49,8 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, 
     
     gs <- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize + shift
     
-    grabSampleQueue <<- sort(c(grabSampleQueue, gs))
+    grabSampleQueue <<- c(gs, grabSampleQueue)
+    windowizationNotice <<- c(windowizationNotice, db)
     
     ifWindowReady()
   })
