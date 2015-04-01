@@ -12,6 +12,8 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, 
   
   backBuffer <- matrix(NA, ncol=data$channels, nrow=backBuffer)
   
+  windowSize <- ceiling(windowSize)
+  
   lastTS <- NA
   lastSample <- 0
   grabSampleQueue <- c(Inf)
@@ -48,8 +50,9 @@ cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, 
     # recalc time to samples
     
     gs <- lastSample + floor((time-lastTS)*data$samplingRate/1E9) + windowSize + shift
-    
-    grabSampleQueue <<- c(gs, grabSampleQueue)
+        
+    grabSampleQueue[[length(grabSampleQueue)]] <<- gs
+    grabSampleQueue <<- c(grabSampleQueue, Inf)
     windowizationNotice <<- c(windowizationNotice, db)
     
     ifWindowReady()
