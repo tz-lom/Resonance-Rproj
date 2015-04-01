@@ -124,7 +124,12 @@ blockReceived <- function(streamId, samples, timestamp, data){
   )
   
   block <- DataBlock(df, timestamp)
-  stream$emit(block)
+  stream$emit(block);
+}
+
+messageReceived <- function(streamId, message, timestamp){
+  stream <- globals$inputStreams[[streamId]];
+  stream$emit(DataBlock(message, timestamp));
 }
 
 block.processor <- function(.firstArg, ...){
