@@ -23,22 +23,25 @@ pipe.FFTFilter <- function(input, choose){
         
         stopifnot(fq<env$window/2)
                 
-        freq <- c(freq, (col-1)*env$window+fq+1)
+        env$freq <- c(env$freq, (col-1)*env$window+fq+1)
       }
       
       env$prealloc <- matrix(0.0, ncol=length(env$channels), nrow=env$window)
       
-      SI.channels(channels = length(freq), samplingRate = SI(input)$samplingRate)
+      SI.channels(channels = length(env$freq), samplingRate = SI(input)$samplingRate)
     },
     online=function(data){
-      L <- lapply(data, function(db){
-        copyColumns(prealloc, db, channels)
+      ret <- matrix(ncol = length(freq), nrow=length(data))
+      for(i in 1:length(data)){
+        copyColumns(prealloc, data[[i]], channels)
         spectre <- mvfft(prealloc)
-        ret <- matrix(Mod(spectre[freq])/window, nrow=1)
-      })
+        ret[i,] <- Mod(spectre[freq])/window
+      }
       #extract times from ret
-      ret <- simplify2array(L)
-      attr(ret, 'TS') <- sapply(L, attr, 'TS')
+      attr(ret, 'TS') <- sapply(data, function(d){
+        ts <- attr(d, 'TS')
+        ts[[length(ts)]]
+      })
       ret
     }
   )

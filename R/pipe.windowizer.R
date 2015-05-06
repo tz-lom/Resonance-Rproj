@@ -28,7 +28,7 @@ pipe.windowizer <- function(input, size, shift){
           #time <- attr(db, 'TS') - (add-unfilled)*1E6/input$samplingRate
 
           block <- window
-          attr(block, 'TS') <- attr(db, 'TS')[nrow(db)-add + 1:unfilled]
+          attr(block, 'TS') <- attr(db, 'TS')[1:size + nrow(db)-add + unfilled - size]
           ret <- c(ret, list(block))
           
           add <- add-unfilled

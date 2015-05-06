@@ -1,22 +1,22 @@
 #' Cut input by event marks, return 'channels' as result of concatenating
 #'
-cross.epochByEvent <- function(input, events, shiftT=0, shiftF=0){
+cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
   
   processor(
-    input, events,
+    data, events,
     
     prepare = function(env){
-      SI.is.channels(input) || stop("Input must be channels")
+      SI.is.channels(data) || stop("Input must be channels")
       SI.is.event(events) || stop("events must be event")
       
   
-      env$signal <- matrix(0.0, nrow = 2^5, ncol = SI(input)$channels)
+      env$signal <- matrix(0.0, nrow = 2^5, ncol = SI(data)$channels)
       env$pointer <- 0L
       env$si.times <- c()
       env$evs <- list()
-      env$index <- 1
+      env$index <- 0
       
-      SI(input)
+      SI(data)
     },
     
     online =  function(si = NULL, events = NULL)
@@ -44,7 +44,7 @@ cross.epochByEvent <- function(input, events, shiftT=0, shiftF=0){
       {
         evs <<- c(evs, 
                   lapply(events, function(e){
-                    r <- list(type = isTRUE(e))
+                    r <- list(type = all(e))
                     if(r$type){
                       r$time <- attr(e, 'TS')+shiftT
                     } else {
@@ -62,12 +62,12 @@ cross.epochByEvent <- function(input, events, shiftT=0, shiftF=0){
       {
         current <- which(si.times >= evs[[1]]$time)[[1]]
         
-        if(evs[[1]$type)
+        if(evs[[1]]$type)
         {
           if(index)
           {
-            res <- rbind(res, signal[index:current, ])
-            timestamps <- append(timestamps, si.times[index:current])
+            res <- rbind(res, signal[index:(current-1), ])
+            timestamps <- append(timestamps, si.times[index:(current-1)])
           }
           index <<- current
         }
@@ -75,9 +75,9 @@ cross.epochByEvent <- function(input, events, shiftT=0, shiftF=0){
         {
           if(index)
           {
-            res <- rbind(res, signal[index:current, ])
-            timestamps <- append(timestamps, si.times[index:current])
-            index <<- 1
+            res <- rbind(res, signal[index:(current-1), ])
+            timestamps <- append(timestamps, si.times[index:(current-1)])
+            index <<- 0
           }
         }
         evs <<- evs[-1]

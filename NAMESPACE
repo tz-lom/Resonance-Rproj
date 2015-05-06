@@ -24,3 +24,5 @@ export("pumpTogether")
 export("compileCallbacks")
 export("calcCSP")
 export("signalPreparation")
+exportPattern("^SI.*")
+
