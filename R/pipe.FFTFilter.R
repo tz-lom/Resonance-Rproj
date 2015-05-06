@@ -1,0 +1,45 @@
+#' Extracts powers of frequencies in specified channels
+#'
+#' @param input Input pipe
+#' @param choose DataFrame with columns 'channel' and 'frequency' 
+#' @return Row where each element corresponds to row from choose and equals to power of channel
+pipe.FFTFilter <- function(input, choose){
+
+  # @todo: it is poor style to do such things like FFT extraction, it is better to create separate procedure
+  
+  processor(
+    input,
+    prepare=function(env){
+      if(!SI.is.window(input)) return('Input must have type Window');
+      
+      env$channels <- unique(choose$channel)
+      env$window <- SI(input)$samples
+      env$freq <- c()
+      
+      # @todo: fix window-base frequency relation
+      for(i in 1:nrow(choose)){
+        col <- which(env$channels==choose[[i,'channel']])
+        fq <- choose[[i, 'frequency']]
+        
+        stopifnot(fq<env$window/2)
+                
+        freq <- c(freq, (col-1)*env$window+fq+1)
+      }
+      
+      env$prealloc <- matrix(0.0, ncol=length(env$channels), nrow=env$window)
+      
+      SI.channels(channels = length(freq), samplingRate = SI(input)$samplingRate)
+    },
+    online=function(data){
+      L <- lapply(data, function(db){
+        copyColumns(prealloc, db, channels)
+        spectre <- mvfft(prealloc)
+        ret <- matrix(Mod(spectre[freq])/window, nrow=1)
+      })
+      #extract times from ret
+      ret <- simplify2array(L)
+      attr(ret, 'TS') <- sapply(L, attr, 'TS')
+      ret
+    }
+  )
+}

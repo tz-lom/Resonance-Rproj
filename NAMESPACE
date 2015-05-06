@@ -3,7 +3,7 @@ importFrom(Rcpp, evalCpp)
 
 import(signal)
 import(geigen)
-import(bit64)
+importFrom(digest, digest)
 importFrom(compiler, cmpfun)
 
 export("DataBlock")
@@ -12,7 +12,6 @@ export("input")
 export("output")
 export("createOutput")
 
-export("simulationSource")
 export("to.channels")
 export("coef_10000_to_500")
 exportPattern("^pipe\\..+")
