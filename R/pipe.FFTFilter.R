@@ -2,8 +2,9 @@
 #'
 #' @param input Input pipe
 #' @param choose DataFrame with columns 'channel' and 'frequency' 
+#' @param normalize If enabled returns percentage of power instead of absolute value
 #' @return Row where each element corresponds to row from choose and equals to power of channel
-pipe.FFTFilter <- function(input, choose){
+pipe.FFTFilter <- function(input, choose, normalize=F) {
 
   # @todo: it is poor style to do such things like FFT extraction, it is better to create separate procedure
   
@@ -35,7 +36,11 @@ pipe.FFTFilter <- function(input, choose){
       for(i in 1:length(data)){
         copyColumns(prealloc, data[[i]], channels)
         spectre <- mvfft(prealloc)
-        ret[i,] <- Mod(spectre[freq])/window
+        if(normalize){
+          ret[i,] <- Mod(spectre[freq])/window/sum(Mod(spectre))
+        } else {
+          ret[i,] <- Mod(spectre[freq])/window
+        }
       }
       #extract times from ret
       attr(ret, 'TS') <- sapply(data, function(d){

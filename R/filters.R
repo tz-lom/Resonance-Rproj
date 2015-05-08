@@ -1,36 +1,3 @@
-pipe.linearApproximation <- function(input, filters){
-  input$type=="channels" || stop("There must be channels in input")
-  
-  bp <- block.processor(input, channels=length(filters))
-  
-  input$connect(function(db){
-    data <- as.matrix(db)
-    
-    ret <- sapply(filters, function(filter){
-      channel <- data[,filter[[1]]]            
-      
-      pairs <- simplify2array(filter[2:length(filter)])
-      
-      
-      pairs <- cbind(
-        
-        as.matrix(c(-Inf, round(pairs[2,1]))),
-        
-        pairs,
-        
-        as.matrix(c(Inf, round(pairs[2,ncol(pairs)])))
-      )
-      
-      interp1(pairs[1,], pairs[2, ],channel)
-    })
-    
-    
-    bp$emit(DataBlock(t(ret), db))
-  })
-  
-  bp
-}
-
 
 pipe.decimate <- function(input, inc, dec, coef){  
   input$type=='channels' || stop('Must be channels in input')
