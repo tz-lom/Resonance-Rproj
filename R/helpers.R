@@ -89,10 +89,10 @@ processor <- function(
     } else {
       result <- if(is.null(offline)){
         environment(online) <- env
-        do.call(online, inputs)
+        online(...)
       } else {
         environment(offline) <- env
-        do.call(offline, inputs)
+        offline(...)
       }
       if(!is.null(result)) SI(result) <- si
       return(result);
