@@ -5,7 +5,7 @@ pipe.references <- function(input, refs){
   processor(
     input,
     prepare = function(env){
-      SI.is.channels(input)=='channels' || stop('Must be channels in input')
+      SI.is.channels(input) || stop('Must be channels in input')
       
       cout <- 1:SI(input)$channels
       env$cout <- cout[-refs]
