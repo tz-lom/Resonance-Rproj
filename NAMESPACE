@@ -11,6 +11,7 @@ export("block.processor")
 export("input")
 export("output")
 export("createOutput")
+export("processor")
 
 export("to.channels")
 export("coef_10000_to_500")
