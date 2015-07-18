@@ -13,7 +13,7 @@ pipe.windowizer <- function(input, size, shift){
       env$TS <- double(SI(input)$channels);
       env$unfilled <- size
       
-      SI.window(channels = SI(input)$channels, samples = size, samplingRate = SI(input)$samplingRate*size/shift)
+      SI.window(channels = SI(input)$channels, samples = size, samplingRate = SI(input)$samplingRate/shift)
     },
     online = function(db){
       add <- nrow(db)
