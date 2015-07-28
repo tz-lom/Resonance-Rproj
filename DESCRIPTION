@@ -1,7 +1,7 @@
 Package: Resonance
 Type: Package
 Title: Interface for Resonance project
-Version: 0.0.2
+Version: 0.3.1
 Date: 2014-04-25
 Author: Nuzhdin Urii
 Maintainer: Nuzhdin Urii <nuzhdin.urii@gmail.com>
@@ -13,8 +13,8 @@ Imports:
     Rcpp (>= 0.11.1),
     geigen (>= 1.4),
     signal (>= 0.7),
-    bit64 (>= 0.9),
     compiler,
+    digest,
     bcidat
 LinkingTo: Rcpp
 VignetteBuilder: knitr

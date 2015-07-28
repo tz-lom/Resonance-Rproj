@@ -1,39 +1,3 @@
-source.channels <- function(data, samplingRate, blockSize, timestamps=NULL){
-  data <- as.matrix(data)
-  if(blockSize==-1) blockSize <- nrow(data)
-  
-  bp <- block.processor('channels', samplingRate=samplingRate, channels=ncol(data))
-  
-  if(is.null(timestamps)){
-    timestamps <- seq(as.integer64(1E9/samplingRate)*blockSize, by=1E9/samplingRate*blockSize, length.out=ceiling(nrow(data)/blockSize))
-  }
-  
-  J <- 0
-  
-  block <- matrix(data[[1]], ncol=ncol(data), nrow=blockSize)
-  
-  bp$nextBlock <- function(){
-    J <<- J+1
-    
-    if(J*blockSize < nrow(data)){
-      push_slice_rows_back(block, data, (J-1)*blockSize, blockSize)
-      return(DataBlock(
-        block,
-        timestamps[[J]]
-      ))
-    }else if((J-1)*blockSize < nrow(data)){
-      return(DataBlock(
-        data[ ((J-1)*blockSize+1):nrow(data) ,, drop=F],
-        timestamps[[J]]
-      ))
-    }else{
-      return(NULL)
-    }
-  }
-
-  
-  bp
-}
 
 source.dataBlocks <- function(blockList, ...){
   bp <- block.processor(...)
