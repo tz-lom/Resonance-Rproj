@@ -8,6 +8,19 @@
 #' @return pipe with type=window
 n.cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
   
+  ifWindowReady <- function(){
+    if(grabSampleQueue[[1]] <= lastSample){
+      last <- nrow(backBuffer)-(lastSample-grabSampleQueue[[1]])
+      block <- backBuffer[ (last-windowSize+1):last,, drop=F]
+      ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
+      
+      bp$emit(DataBlock(block, ts))
+      
+      grabSampleQueue <<- grabSampleQueue[2:length(grabSampleQueue)]
+      ifWindowReady()
+    }
+  }
+  
   processor(
     data, events,
     prepare = function(env){
@@ -56,17 +69,4 @@ n.cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
       }
       
     })
-  
-  ifWindowReady <- function(){
-    if(grabSampleQueue[[1]] <= lastSample){
-      last <- nrow(backBuffer)-(lastSample-grabSampleQueue[[1]])
-      block <- backBuffer[ (last-windowSize+1):last,, drop=F]
-      ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
-      
-      bp$emit(DataBlock(block, ts))
-      
-      grabSampleQueue <<- grabSampleQueue[2:length(grabSampleQueue)]
-      ifWindowReady()
-    }
-  }
 }
