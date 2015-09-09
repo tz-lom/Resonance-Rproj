@@ -5,7 +5,7 @@
 #' @param windowSize Size of resulting window
 #' @param backBuffer Size of buffer for data, may be increased in case of big delay in events arrival
 #' @return pipe with type=window
-cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, shift=0){
+n.cross.windowizeByEvents <- function(data, events, windowSize, backBuffer=10000, shift=0){
   bp <- block.processor(data, type="window", size=windowSize, channels=data$channels)
   
   backBuffer <- max(backBuffer, (windowSize+abs(shift))*2)

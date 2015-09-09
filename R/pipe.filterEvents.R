@@ -1,6 +1,4 @@
-#'
-#'
-n.pipe.filterEvents <- function(input, match){
+pipe.filterEvents <- function(input, match){
   processor(
     input,
     prepare = function(env){
@@ -8,10 +6,7 @@ n.pipe.filterEvents <- function(input, match){
       SI(input)
     },
     online = function(input){
-      lapply(input, function(x){
-        ret <- isTRUE(x==match)
-        attr(ret, 'TS') <- attr(x, 'TS')
-        ret
-      })
-    })
+      Filter(match, input)
+    }
+  )
 }
