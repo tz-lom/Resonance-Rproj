@@ -50,8 +50,10 @@ SI <- function(input){
 }
 
 .processor_cache <- new.env()
+.processor_si_cache <- new.env()
 .reset_processor_cache <- function(){
   .processor_cache <<- new.env()
+  .processor_si_cache <<- new.env()
 }
 
 #' Wraps all necessary handlers to pipeline function
@@ -84,8 +86,11 @@ processor <- function(
       # prepare online processing
       environment(online) <- env
       .processor_cache[[hash]] <- online;
-      SI(si, 'online') <- TRUE
-      return(si)
+      .processor_si_cache[[hash]] <- si;
+      result <- do.call(.processor_cache[[hash]], inputs)
+      SI(result) <- si
+      SI(result, 'online') <- TRUE
+      return(result)
     } else {
       result <- if(is.null(offline)){
         environment(online) <- env
@@ -94,13 +99,15 @@ processor <- function(
         environment(offline) <- env
         offline(...)
       }
-      if(!is.null(result)) SI(result) <- si
+      SI(result) <- si
       return(result);
     }
   }
   else
   {
     # perform online processing
-    do.call(.processor_cache[[hash]], inputs)
+    result <- do.call(.processor_cache[[hash]], inputs)
+    SI(result) <- .processor_si_cache[[hash]]
+    return(result)
   }
 }

@@ -3,7 +3,7 @@
 #' @param data data stream
 #' @param events event stream
 #' @param backBuffer optional size of backtracking buffer, in DataBlock s
-cross.filterByTimestamps <- function(data, events, backBuffer=100){
+n.cross.filterByTimestamps <- function(data, events, backBuffer=100){
   # @todo: maybe mark that sampling is broken
   bp <- block.processor(data)
   

@@ -11,6 +11,8 @@ NumericMatrix forceCopy(NumericMatrix m)
 void shiftRows(NumericMatrix m, int shift)
 {
   if(shift==0) return;
+  if( (shift>0 && shift>m.nrow()) ||
+      (shift<0 && -shift>m.nrow())) stop("Shift exceeds matrix dimension");
   int cols = m.ncol();
   
   if(shift>0)
@@ -165,6 +167,46 @@ void rowsCopy(NumericMatrix dest, int destBegin, NumericMatrix src, int srcBegin
         dest(dr, col) = src(sr, col);
       }
   }
+}
+
+// [[Rcpp::export]]
+void replace_columns_block(NumericMatrix dest, int destRow, int destCol, NumericMatrix src)
+{
+  int srcR = src.nrow();
+  int srcC = src.ncol();
+  int destR = dest.nrow();
+  int destC = dest.ncol();
+  
+  int newR = 0, newC = 0;
+  
+  if(srcR+destRow > destR) newR = srcR+destRow;
+  if(srcC+destCol > destC) newC = srcC+destCol;
+  
+  if(newC || newR)
+  {
+    std::cout << "resize";
+    // resise destination
+    if(!newC) newC = destC;
+    if(!newR) newR = destR;
+    NumericMatrix N(newC, newR);
+    //N(Range(0, destR-1), Range(0, destC-1)). dest;
+    for(int r=0; r<destR; ++r)
+      for(int c=0; c<destC; ++c)
+        N(r, c) = dest(r, c);
+    dest = N;
+  }
+  
+  for(int dr=destRow, sr=0; sr<srcR; ++sr,++dr)
+  {
+    for(int sc=0, dc=destC; sc<srcC; ++sc,++dc)
+    {
+      
+      dest(dr, dc) = src(sr, sc);
+      std::cout << dest(dr,dc) << std::endl;
+    }
+  }
+  
+  //return dest;
 }
 
 // [[Rcpp::export]]
