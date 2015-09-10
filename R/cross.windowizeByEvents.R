@@ -6,21 +6,7 @@
 #' @param windowSize Size of resulting window
 #' @param backBuffer Size of buffer for data, may be increased in case of big delay in events arrival
 #' @return pipe with type=window
-n.cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
-  
-  ifWindowReady <- function(){
-    if(grabSampleQueue[[1]] <= lastSample){
-      last <- nrow(backBuffer)-(lastSample-grabSampleQueue[[1]])
-      block <- backBuffer[ (last-windowSize+1):last,, drop=F]
-      ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
-      
-      bp$emit(DataBlock(block, ts))
-      
-      grabSampleQueue <<- grabSampleQueue[2:length(grabSampleQueue)]
-      ifWindowReady()
-    }
-  }
-  
+cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
   processor(
     data, events,
     prepare = function(env){
@@ -31,13 +17,17 @@ n.cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
       env$si.times <- c()
       env$lastTS <- NA
       env$lastSample <- 0
-      env$grabSampleQueue <- c(Inf)      
+      env$grabSampleQueue <- c()      
+      env$windowSelector <- 1:windowSize-1
+      env$samplingRate <- SI(data)$samplingRate
       
       SI.window(channels = SI(data)$channels, samples = windowSize, samplingRate = SI(data)$samplingRate)
     },
     online = function(si, events){
-      if(!is.null(data)){
-        
+      
+      # combin signal
+      if(nrow(si)>0){
+          
         if(nrow(si)+pointer >= nrow(signal))
         {
           tmp <- matrix(0.0, ncol=ncol(si), nrow=(nrow(signal)+nrow(si))*1.5)
@@ -51,22 +41,49 @@ n.cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
         si.times <<- append(si.times, attr(si, 'TS'))
       }
       
-      if(!is.null(events)){
+      # combine events
+      if(length(events)>0){
         time <- sapply(events, attr,'TS')
-        gs <- lastSample + floor((time-lastTS)*data$samplingRate/1E6) + windowSize + shift 
-        grabSampleQueue <<- sort(c(grabSampleQueue, gs))
+        grabSampleQueue <<- c(grabSampleQueue, time)
       }
       
-      if(grabSampleQueue[[1]] <= lastSample){
-        last <- nrow(backBuffer)-(lastSample-grabSampleQueue[[1]])
-        block <- backBuffer[ (last-windowSize+1):last,, drop=F]
-        ts <- lastTS - (lastSample-grabSampleQueue[[1]])*1E9/data$samplingRate
+      ret <- list()
+      
+      while(length(grabSampleQueue)>0){
+        gs <- grabSampleQueue[[1]]
         
-        bp$emit(DataBlock(block, ts))
+        # @todo: when which.max will be fixed use it 
+        moar <- which(si.times >= gs)  
         
-        grabSampleQueue <<- grabSampleQueue[2:length(grabSampleQueue)]
-        ifWindowReady()
+        if(length(moar)>0){
+          
+          pos <- moar[1] + shift
+          
+          if(pos < 1) {
+            # early event, drop it
+            grabSampleQueue <<- grabSampleQueue[-1]
+            next
+          }
+          
+          if(length(si.times) >= pos+windowSize){
+            # get window and move on
+            wnd <- signal[pos + windowSelector, , drop=F]
+            attr(wnd, 'TS') <- si.times[pos + windowSelector]
+            
+            grabSampleQueue <<- grabSampleQueue[-1]
+            
+            ret <- c(ret, list(wnd))
+            next
+          }
+          break  # wait until full window arrives
+          
+        }else{
+          break # waiting for samples
+        }
+        
       }
+      
+      ret
       
     })
 }
