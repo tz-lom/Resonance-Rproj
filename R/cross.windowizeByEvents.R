@@ -1,11 +1,10 @@
-#' @todo: not production ready
 #' Split data stream to windows using event stream
 #' 
 #' @param data Data stream
 #' @param events Events stream
 #' @param windowSize Size of resulting window
 #' @param backBuffer Size of buffer for data, may be increased in case of big delay in events arrival
-#' @return pipe with type=window
+#' @return window
 cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
   processor(
     data, events,
