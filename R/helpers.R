@@ -52,8 +52,8 @@ SI <- function(input){
 .processor_cache <- new.env()
 .processor_si_cache <- new.env()
 .reset_processor_cache <- function(){
-  .processor_cache <<- new.env()
-  .processor_si_cache <<- new.env()
+  rm(list = ls(.processor_cache),envir = .processor_cache)
+  rm(list = ls(.processor_si_cache),envir = .processor_si_cache)
 }
 
 #' Wraps all necessary handlers to pipeline function
@@ -61,7 +61,7 @@ SI <- function(input){
 #'
 processor <- function(
   ...,
-  prepare=NULL,
+  prepare,
   online,
   offline=NULL
   ){
@@ -75,19 +75,15 @@ processor <- function(
   {
     env <- new.env(parent=environment(online))
     
-    if(!is.null(prepare)) {
-      si <- prepare(env)
-      if(is.character(si)) stop(si)
-    } else {
-      si <- inputs[[1]]
-    }
+    si <- prepare(env)
+    if(is.character(si)) stop(si)
     
     if(!is.null(SI(inputs[[1]])$online)){
       # prepare online processing
       environment(online) <- env
       .processor_cache[[hash]] <- online;
       .processor_si_cache[[hash]] <- si;
-      result <- do.call(.processor_cache[[hash]], inputs)
+      result <- list()
       SI(result) <- si
       SI(result, 'online') <- TRUE
       return(result)
