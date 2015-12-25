@@ -7,9 +7,10 @@ NumericMatrix forceCopy(NumericMatrix m)
   return clone(m);
 }
 
-// [[Rcpp::export]]
-void shiftRows(NumericMatrix m, int shift)
+template<typename Type>
+void doShiftRows(SEXP matr, int shift)
 {
+  Type m = as<Type>(matr);
   if(shift==0) return;
   if( (shift>0 && shift>m.nrow()) ||
       (shift<0 && -shift>m.nrow())) stop("Shift exceeds matrix dimension");
@@ -35,6 +36,29 @@ void shiftRows(NumericMatrix m, int shift)
         m(row,col) = m(row-shift,col);
       }
     }
+  }
+}
+
+
+// [[Rcpp::export]]
+void shiftRows(SEXP m, int shift)
+{
+  switch(TYPEOF(m))
+  {
+  case INTSXP:
+    doShiftRows<IntegerMatrix>(m, shift);
+    break;
+  case REALSXP:
+    doShiftRows<NumericMatrix>(m, shift);
+    break;
+  case STRSXP:
+    doShiftRows<StringMatrix>(m, shift);
+    break;
+  case LGLSXP:
+    doShiftRows<LogicalMatrix>(m, shift);
+    break;
+  default:
+    stop("Unhandled type of matrix");
   }
 }
 

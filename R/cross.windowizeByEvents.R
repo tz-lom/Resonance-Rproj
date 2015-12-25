@@ -4,8 +4,11 @@
 #' @param events Events stream
 #' @param windowSize Size of resulting window
 #' @param backBuffer Size of buffer for data, may be increased in case of big delay in events arrival
+#' @param dropLateEvents Don't expand buffer infinitely, lateTime controls buffer size and any events that arrive with timestamp earlier than last data timestamp-lateTime potentially can be dropped
+#' TRUE forces that parameter, FALSE disables, NULL - TRUE when online and FALSE when offline
+#' @param lateTime - allowed delay for events (in seconds)
 #' @return window
-cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
+cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateEvents = NULL, lateTime=10){
   processor(
     data, events,
     prepare = function(env){
@@ -13,12 +16,21 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
       
       env$signal <- matrix(0.0, ncol=SI(data)$channels, nrow=2^5)
       env$pointer <- 0L
-      env$si.times <- c()
+      env$si.times <- vector(mode = "double", length=nrow(env$signal))
       env$lastTS <- NA
       env$lastSample <- 0
       env$grabSampleQueue <- c()      
       env$windowSelector <- 1:windowSize-1
       env$samplingRate <- SI(data)$samplingRate
+      if(is.null(dropLateEvents)) {
+        dropLateEvents <- !is.null(SI(data)$online) && SI(data)$online
+      }
+      if(dropLateEvents) {
+        env$shiftBufferTo <- ceiling(lateTime*SI(data)$samplingRate)
+        env$maxBufferSize <- env$shiftBufferTo*2
+      } else {
+        env$maxBufferSize <- Inf
+      }
       
       SI.window(channels = SI(data)$channels, samples = windowSize, samplingRate = SI(data)$samplingRate)
     },
@@ -30,14 +42,26 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0){
         if(nrow(si)+pointer >= nrow(signal))
         {
           tmp <- matrix(0.0, ncol=ncol(si), nrow=(nrow(signal)+nrow(si))*1.5)
-          Resonance:::rowsCopy(tmp,0, signal, 0, -1)
+          rowsCopy(tmp,0, signal, 0, -1)
           signal <<- tmp
+          tmp <- vector(mode="double", length=nrow(signal))
+          tmp[1:length(si.times)] <- si.times
+          si.times <<- tmp
         }
         
-        Resonance:::rowsCopy(signal, pointer, si, 0, -1)
+        rowsCopy(signal, pointer, si, 0, -1)
+        si.times[1:nrow(si)+pointer] <- attr(si, 'TS')
         pointer <<- pointer+nrow(si)
         
         si.times <<- append(si.times, attr(si, 'TS'))
+        
+        if(pointer > maxBufferSize){
+          diff <- pointer-shiftBufferTo
+          shiftRows(signal, -diff)
+          si.times[1:shiftBufferTo] <- si.times[(diff+1):pointer]
+          si.times[diff:pointer] <- 0
+          pointer <<- shiftBufferTo
+        }
       }
       
       # combine events
