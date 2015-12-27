@@ -65,19 +65,27 @@ processor <- function(
   online,
   offline=NULL
   ){
-  
+
   inputs <- list(...)
   #check if it is online stream and already initialized
-  hash <- paste0('RE_',digest(sys.call(-1)))
-  
-  
+  # need to carefully hash callstack
+  # it is hack here
+
+  #sc <- as.list(sys.frame(-1))
+  #sc[ sc %in% inputs ] <- NULL
+  #sc <- as.list(sys.frame(-1))
+
+  #hash <- paste('RE',digest(sys.call(-1)), digest(sc), sep = '_')
+  hash <- paste0('RE_', digest(sys.call(-1)))
+
+
   if(is.null(.processor_cache[[hash]]))
   {
     env <- new.env(parent=environment(online))
-    
+
     si <- prepare(env)
     if(is.character(si)) stop(si)
-    
+
     if(!is.null(SI(inputs[[1]])$online)){
       # prepare online processing
       environment(online) <- env
