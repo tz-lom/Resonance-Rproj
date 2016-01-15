@@ -50,10 +50,8 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
         }
         
         rowsCopy(signal, pointer, si, 0, -1)
-        si.times[1:nrow(si)+pointer] <- attr(si, 'TS')
+        si.times[1:nrow(si)+pointer] <<- attr(si, 'TS')
         pointer <<- pointer+nrow(si)
-        
-        si.times <<- append(si.times, attr(si, 'TS'))
         
         if(pointer > maxBufferSize){
           diff <- pointer-shiftBufferTo
@@ -88,7 +86,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
             next
           }
           
-          if(length(si.times) >= pos+windowSize){
+          if(pointer >= pos+windowSize){
             # get window and move on
             wnd <- signal[pos + windowSelector, , drop=F]
             attr(wnd, 'TS') <- si.times[pos + windowSelector]
