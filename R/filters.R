@@ -1,32 +1,3 @@
-
-pipe.decimate <- function(input, inc, dec, coef){  
-  input$type=='channels' || stop('Must be channels in input')
-  
-  bp <- block.processor(input, samplingRate=input$samplingRate*inc/dec)
-  
-  decs <- list()
-  
-  for(i in 1:input$channels)
-    decs[[i]] <- upFirDown(inc, dec, coef)
-  
-  input$connect(function(db){
-    res <- decs[[1]](db[,1])
-    
-    result <- matrix(nrow = length(res), ncol=ncol(db))
-    result[,1] <- res
-    
-    if(ncol(db)>1) {
-      for(i in 2:ncol(db)){
-        result[,i] <- decs[[i]](db[,i])
-      }
-    }
-    
-    bp$emit(DataBlock(result, db))
-  })
-  
-  bp
-}
-
 to.channels <- function(input){
   if(input$type == 'channels') return(input)
   
