@@ -24,8 +24,8 @@ SI.event <- function(){
 DB.event <- function(SI, timestamp, message){
   attr(message, 'TS') <- timestamp
   ret <- list(message)
-  class(ret) <- 'DB.event'
   SI(ret) <- SI
+  class(ret) <- 'DB.event'
   ret
 }
 
@@ -43,25 +43,6 @@ DB.window <- function(SI, timestamp, vector, samples){
   ret <- list(window)
   class(ret) <- c('DB.window', 'matrix')
   SI(ret) <- SI
-  ret
-}
-
-DB.event <- function(SI, timestamp, event){
-  attr(event, 'TS') <- timestamp
-  ret <- list(event)
-  SI(ret) <- SI
-  ret
-}
- 
-merge.DB.window <- function(x, y, ...){
-  ret <- c(x, y, ...)
-  SI(ret) <- SI(x)
-  ret
-}
-
-merge.DB.event <- function(x, y, ...){
-  ret <- c(x, y, ...)
-  SI(ret) <- SI(x)
   ret
 }
 

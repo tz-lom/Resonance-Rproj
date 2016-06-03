@@ -12,3 +12,22 @@ test_that("merge.DB.channels", {
   expect_equal(O, M)
 })
 
+test_that("merge.DB.event", {
+  si <- SI.event()
+  
+  A <- DB.event(si, 3 , 'a')
+  B <- DB.event(si, 5 , 'b')
+  C <- DB.event(si, 12, 'c')
+  
+  M <- merge.DB.event(A,B,C)
+  O <- list('a','b','c')
+  attr(O[[1]], 'TS') <- 3 
+  attr(O[[2]], 'TS') <- 5
+  attr(O[[3]], 'TS') <- 12
+  SI(O) <- si
+  class(O) <- 'DB.event'
+  
+  
+  expect_equal(O, M)
+})
+
