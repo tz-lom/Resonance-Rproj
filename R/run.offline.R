@@ -1,4 +1,14 @@
-run.offline <- function(data, code) {
+run.offline <- function(inputs, blocks, code) {
+  
+  data <- lapply(inputs, function(si){
+    do.call(
+      merge,
+      Filter(function(x){
+        identical(SI(x), si)
+      }, blocks)
+    )
+  })
+  
   
   env <- new.env()
   env$input <- function(index){
@@ -11,9 +21,11 @@ run.offline <- function(data, code) {
   
   results <- list()
   
-  env$createOutput <- function(name, out){
+  env$createOutput <- function(out, name){
     results[[name]] <<- out
   }
+  
+  if(!is.language(code)) code <- parse(text=code)
   
   eval(code, env)
   env$process()

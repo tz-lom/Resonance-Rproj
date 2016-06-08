@@ -31,14 +31,18 @@ DB.event <- function(SI, timestamp, message){
 
 DB.channels <- function(SI, timestamp, vector){
   data <- matrix(vector, ncol=SI$channels, byrow = T)
-  attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+  if(length(timestamp)==1){
+    attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+  } else {
+    attr(data, 'TS') <- timestamp
+  }
   class(data) <- c('DB.channels','matrix')
   SI(data) <- SI
   data
 }
 
-DB.window <- function(SI, timestamp, vector, samples){
-  window <- matrix(vector, nrow=samples, byrow = T)
+DB.window <- function(SI, timestamp, vector){
+  window <- matrix(vector, nrow=SI$samples, byrow = T)
   attr(window, 'TS') <- timestamp
   ret <- list(window)
   class(ret) <- c('DB.window', 'matrix')
@@ -46,23 +50,43 @@ DB.window <- function(SI, timestamp, vector, samples){
   ret
 }
 
-merge.DB.channels <- function(x,y,...){
-  ret <- rbind(x, y, ...)
+DB.something <- function(SI, timestamp, data){
+  do.call(paste0('DB.', SI$type), list(SI, timestamp, data))
+}
+
+makeEmpty.channels <- function(si){
+  ret <- matrix(0.0, nrow=0, ncol=si$channels)
+  SI(ret) <- si
+  ret
+}
+
+makeEmpty.event <- function(si){
+  ret <- list()
+  SI(ret) <- si
+  ret
+}
+
+makeEmpty <- function(si){
+  do.call(paste("makeEmpty", si$type, sep="."), list(si))
+}
+
+merge.DB.channels <- function(x, ...){
+  ret <- rbind(x, ...)
   SI(ret) <- SI(x)
-  ts <- c(attr(x, 'TS'), attr(y, 'TS'), sapply(list(...), attr, 'TS'))
+  ts <- c(attr(x, 'TS'), do.call(c, lapply(list(...), attr, 'TS')))
   attr(ret, 'TS') <- ts
   class(ret) <- class(x)
   ret
 }
 
-merge.DB.event <- function(x,y,...){
-  ret <- c(x,y,...)
+merge.DB.event <- function(x, ...){
+  ret <- c(x, ...)
   SI(ret) <- SI(x)
   class(ret) <- class(x)
   ret
 }
 
-merge.DB.window <- function(x,y,...){
+merge.DB.window <- function(x, ...){
   ret <- c(x,y,...)
   SI(ret) <- SI(x)
   class(ret) <- class(x)
