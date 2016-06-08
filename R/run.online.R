@@ -22,7 +22,7 @@ run.online <- function(inputs, blocks, code){
   }
   
   nextBlock.DB.event <- function(b){
-    onDataBlock.message(id = 2, msg = as.character(b), timestamp = attr(b, 'TS'))
+    onDataBlock.message(id = 2, msg = as.character(b[[1]]), timestamp = attr(b[[1]], 'TS'))
   }
   
   nextBlock.default <- function(b){

@@ -4,6 +4,7 @@ test_that("cross.windowizeByEvents", {
   
   
   blocks <- list(
+    DB.channels(Csi, 3, 1:2),
     DB.channels(Csi, 3+10*5E4, 26:75),
     DB.event(Esi, 3 , 'a')
   )
@@ -17,7 +18,8 @@ process <- function(){
   
   code <- "
 process <- function(){
-  createOutput(input(1), 'out')
+  createOutput(input(2), 'out')
+  #foo(input(2))
 }
   "
 
@@ -32,7 +34,6 @@ process <- function(){
               },
               online = function(Y){
                 cat("------------------------------------------------------> online\n")
-                print(x)
                 print(Y)
               }
               )
