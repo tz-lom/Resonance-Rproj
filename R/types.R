@@ -21,6 +21,14 @@ SI.event <- function(){
   )
 }
 
+SI.epoch <- function(channels, samplingRate){
+  list(
+    type='epoch',
+    channels = channels,
+    samplingRate = samplingRate
+  )
+}
+
 DB.event <- function(SI, timestamp, message){
   attr(message, 'TS') <- timestamp
   ret <- list(message)
@@ -50,6 +58,19 @@ DB.window <- function(SI, timestamp, vector){
   ret
 }
 
+DB.epoch <- function(SI, timestamp, vector){
+  data <- matrix(vector, ncol=SI$channels, byrow=T)
+  if(length(timestamp)==1){
+    attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+  } else {
+    attr(data, 'TS') <- timestamp
+  }
+  ret <- list(data)
+  class(ret) <- c('DB.epoch','matrix')
+  SI(ret) <- SI
+  data
+}
+
 DB.something <- function(SI, timestamp, data){
   do.call(paste0('DB.', SI$type), list(SI, timestamp, data))
 }
@@ -61,6 +82,12 @@ makeEmpty.channels <- function(si){
 }
 
 makeEmpty.event <- function(si){
+  ret <- list()
+  SI(ret) <- si
+  ret
+}
+
+makeEmpty.epoch <- function(si){
   ret <- list()
   SI(ret) <- si
   ret
@@ -87,7 +114,14 @@ merge.DB.event <- function(x, ...){
 }
 
 merge.DB.window <- function(x, ...){
-  ret <- c(x,y,...)
+  ret <- c(x, ...)
+  SI(ret) <- SI(x)
+  class(ret) <- class(x)
+  ret
+}
+
+merge.DB.epoch <- function(x, ...){
+  ret <- c(x, ...)
   SI(ret) <- SI(x)
   class(ret) <- class(x)
   ret
@@ -105,5 +139,10 @@ SI.is.window <- function(input){
 
 SI.is.event <- function(input){
   r <- SI(input)$type == 'event'
+  all(r, length(r)>0)
+}
+
+SI.is.epoch <- function(input){
+  r <- SI(input)$type == 'epoch'
   all(r, length(r)>0)
 }

@@ -1,9 +1,7 @@
-#' Filters data stream cutting marked blocks
+#' Cut input by event marks, return 'channels' as result of concatenating
 #'
-#' @param data data stream
-#' @param events event stream
-#' @param backBuffer optional size of backtracking buffer
-cross.epochByEvent <- function(data, events, backBuffer=100){
+cross.cutByEvent <- function(data, events, shiftT=0, shiftF=0){
+  
   processor(
     data, events,
     
@@ -11,16 +9,19 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
       SI.is.channels(data) || stop("Input must be channels")
       SI.is.event(events) || stop("events must be event")
       
-      
+  
       env$signal <- matrix(0.0, nrow = 2^5, ncol = SI(data)$channels)
       env$pointer <- 0L
       env$si.times <- c()
       env$evs <- list()
       env$index <- 0
       
-      SI.epoch(SI(data)$channels, SI(data)$samplingRate)
+      SI(data)
     },
-    online = function(data, events){
+    
+    online =  function(si = NULL, events = NULL)
+    {
+      
       res <- NULL
       timestamps <- NULL
       #assign temporary signals and events
@@ -51,13 +52,13 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
                     }
                     r
                   })
-        )
+                  )
       }
       
-      
+        
       while( length(evs) && length(si.times) &&
-             evs[[1]]$time < si.times[[length(si.times)]]
-      )
+        evs[[1]]$time < si.times[[length(si.times)]]
+        )
       {
         current <- which(si.times >= evs[[1]]$time)[[1]]
         
@@ -88,6 +89,7 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
       }
       
       res
+      
     }
   )
 }

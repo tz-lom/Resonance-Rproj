@@ -1,4 +1,4 @@
-pipe.channels.transform <- function(input, outputChannels, transform){
+pipe.transform.channels <- function(input, outputChannels, transform){
   processor(
     input,
     prepare = function(env){
