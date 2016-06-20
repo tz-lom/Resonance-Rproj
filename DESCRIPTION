@@ -14,7 +14,8 @@ Imports:
     geigen (>= 1.4),
     signal (>= 0.7),
     compiler,
-    digest
+    digest,
+    zoo
 LinkingTo: Rcpp
 VignetteBuilder: knitr
 

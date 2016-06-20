@@ -2,8 +2,7 @@
 #'
 #' @param data data stream
 #' @param events event stream
-#' @param backBuffer optional size of backtracking buffer
-cross.epochByEvent <- function(data, events, backBuffer=100){
+cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
   processor(
     data, events,
     
@@ -16,30 +15,30 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
       env$pointer <- 0L
       env$si.times <- c()
       env$evs <- list()
-      env$index <- 0
+      env$index <- 0L
       
       SI.epoch(SI(data)$channels, SI(data)$samplingRate)
     },
     online = function(data, events){
-      res <- NULL
+      res <- list()
       timestamps <- NULL
       #assign temporary signals and events
-      if(!is.null(si))
+      if(nrow(data)>0)
       {
-        if(nrow(si)+pointer >= nrow(signal))
+        if(nrow(data)+pointer >= nrow(signal))
         {
-          tmp <- matrix(0.0, ncol=ncol(si), nrow=(nrow(signal)+nrow(si))*1.5)
+          tmp <- matrix(0.0, ncol=ncol(data), nrow=(nrow(signal)+nrow(data))*1.5)
           Resonance:::rowsCopy(tmp,0, signal, 0, -1)
           signal <<- tmp
         }
         
-        Resonance:::rowsCopy(signal, pointer, si, 0, -1)
-        pointer <<- pointer+nrow(si)
+        Resonance:::rowsCopy(signal, pointer, data, 0, -1)
+        pointer <<- pointer+nrow(data)
         
-        si.times <<- append(si.times, attr(si, 'TS'))
+        si.times <<- append(si.times, attr(data, 'TS'))
       }
       
-      if(!is.null(events))
+      if(length(events))
       {
         evs <<- c(evs, 
                   lapply(events, function(e){
@@ -52,6 +51,11 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
                     r
                   })
         )
+        
+        # normalize event sequence: must be T F T F T ...
+        filt <- c(evs[[1]]$type,
+                  diff(sapply(evs, `[[`, 'type'))!=0)
+        evs <<- evs[filt]
       }
       
       
@@ -65,7 +69,7 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
         {
           if(index)
           {
-            res <- rbind(res, signal[index:(current-1), ])
+            res <- c(res, signal[index:(current-1), ])
             timestamps <- append(timestamps, si.times[index:(current-1)])
           }
           index <<- current
@@ -74,9 +78,9 @@ cross.epochByEvent <- function(data, events, backBuffer=100){
         {
           if(index)
           {
-            res <- rbind(res, signal[index:(current-1), ])
+            res <- c(res, signal[index:(current-1), ])
             timestamps <- append(timestamps, si.times[index:(current-1)])
-            index <<- 0
+            index <<- 0L
           }
         }
         evs <<- evs[-1]
