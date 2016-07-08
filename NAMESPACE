@@ -18,4 +18,5 @@ export("pipeline")
 export("calcCSP")
 export("signalPreparation")
 exportPattern("^SI.*")
+exportPattern(".*")
 

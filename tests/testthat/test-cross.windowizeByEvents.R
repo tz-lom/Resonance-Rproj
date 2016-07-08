@@ -1,46 +1,18 @@
 test_that("cross.windowizeByEvents", {
-  Csi <- SI.channels(2, 100)
-  Esi <- SI.event()
-  
-  
-  blocks <- list(
-    DB.channels(Csi, 3, 1:2),
-    DB.channels(Csi, 3+10*5E4, 26:75),
-    DB.event(Esi, 3 , 'a')
-  )
+  load('windowize.Rdata')
   
   
   code <- "
 process <- function(){
-  createOutput(cross.windowizeByEvents(input(1), input(2), 20, 3), 'out')
+  createOutput(cross.windowizeByEvents(input(1), input(2), 500, 75), 'out')
 }
   "
   
-  code <- "
-process <- function(){
-  createOutput(input(2), 'out')
-  #foo(input(2))
-}
-  "
 
-  foo <- function(x){
-    processor(x,
-              prepare = function(env){
-                cat("======================================================> prepare\n")
-                print(env)
-                print(x)
-                
-                SI(x)
-              },
-              online = function(Y){
-                cat("------------------------------------------------------> online\n")
-                print(Y)
-              }
-              )
-  }
- 
   A <- run.online(list(Csi, Esi), blocks, code)
   B <- run.offline(list(Csi, Esi), blocks, code)
+  
+#  all.equal(A$out,B$out, check.attributes = F)
    
-  expect_equal(A, B)
+  expect_equal(A$out, B$out, check.attributes = F)
 })

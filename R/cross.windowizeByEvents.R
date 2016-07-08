@@ -35,7 +35,6 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
       SI.window(channels = SI(data)$channels, samples = windowSize, samplingRate = SI(data)$samplingRate)
     },
     online = function(si, events){
-      
       # combin signal
       if(nrow(si)>0){
           
@@ -54,11 +53,11 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
         pointer <<- pointer+nrow(si)
         
         if(pointer > maxBufferSize){
-          diff <- pointer-shiftBufferTo
-          shiftRows(signal, -diff)
-          si.times[1:shiftBufferTo] <- si.times[(diff+1):pointer]
-          si.times[diff:pointer] <- 0
-          pointer <<- shiftBufferTo
+          #diff <- pointer-shiftBufferTo
+          shiftRows(signal, -shiftBufferTo)
+          si.times[1:(nrow(signal)-shiftBufferTo)] <<- si.times[(shiftBufferTo+1):nrow(signal)]
+          si.times[(nrow(signal)-shiftBufferTo):nrow(signal)] <<- 0
+          pointer <<- pointer - shiftBufferTo
         }
       }
       
