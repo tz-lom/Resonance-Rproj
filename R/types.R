@@ -38,7 +38,7 @@ DB.event <- function(SI, timestamp, message){
 }
 
 DB.channels <- function(SI, timestamp, vector){
-  data <- matrix(vector, ncol=SI$channels, byrow = T)
+  data <- matrix(as.double(vector), ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
   } else {
