@@ -7,6 +7,11 @@ pipe.linearApproximation <- function(input, filters){
       SI.channels(samplingRate = SI(input)$samplingRate, channels = length(filters))
     },
     online = function(data){
+      if(nrow(data)==0){
+        ret <- matrix(0.0, ncol=length(filters), nrow=0)
+        attr(ret, 'TS') <- c()
+        return(ret)
+      }
       ret <- sapply(filters, function(filter){
         channel <- data[,filter[[1]]]            
         
@@ -24,6 +29,9 @@ pipe.linearApproximation <- function(input, filters){
         
         interp1(pairs[1,], pairs[2, ],channel)
       })
+      if(!is.matrix(ret)){
+        ret <- matrix(ret, nrow=1)
+      }
       
       attr(ret, 'TS') <- attr(data, 'TS')
       ret
