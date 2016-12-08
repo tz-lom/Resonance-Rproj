@@ -75,6 +75,12 @@ DB.something <- function(SI, timestamp, data){
   do.call(paste0('DB.', SI$type), list(SI, timestamp, data))
 }
 
+makeEmpty.window <- function(si){
+  ret <- list()
+  SI(ret) <- si
+  ret
+}
+
 makeEmpty.channels <- function(si){
   ret <- matrix(0.0, nrow=0, ncol=si$channels)
   SI(ret) <- si

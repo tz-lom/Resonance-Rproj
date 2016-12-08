@@ -1,5 +1,7 @@
 run.offline <- function(inputs, blocks, code) {
   
+  Resonance:::.reset_processor_cache()
+  
   data <- lapply(inputs, function(si){
     do.call(
       merge,
