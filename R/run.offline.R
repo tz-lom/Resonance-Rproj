@@ -1,12 +1,15 @@
 run.offline <- function(inputs, blocks, code) {
   
   data <- lapply(inputs, function(si){
-    do.call(
-      merge,
-      Filter(function(x){
-        identical(SI(x), si)
-      }, blocks)
-    )
+    F <- Filter(function(x){
+      identical(SI(x), si)
+    }, blocks)
+    
+    if(length(F)){
+      do.call(merge, F)
+    }else{
+      makeEmpty(si)
+    }
   })
   
   
