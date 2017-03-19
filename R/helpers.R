@@ -37,8 +37,9 @@ processor <- function(
   #sc[ sc %in% inputs ] <- NULL
   #sc <- as.list(sys.frame(-1))
 
-  #hash <- paste('RE',digest(sys.call(-1)), digest(sc), sep = '_')
-  hash <- paste0('RE_', digest(sys.call(-1)))
+  #@todo: replace digest to something faster
+  A <- sys.call(-1)
+  hash <- call_hash(A)
 
 
   if(is.null(.processor_cache[[hash]]))
