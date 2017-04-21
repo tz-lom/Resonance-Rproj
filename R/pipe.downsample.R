@@ -10,13 +10,17 @@ pipe.downsample = function(input, dec){
     },
     online = function(db){
       n <- nrow(db)
-      take <- which((1:n - count) %% dec == 0)
-      
-      count <<- count+n
-      
-      ret <- db[take,, drop=FALSE]
-      attr(ret, 'TS') <- attr(db,'TS')[take]
-      ret
+      if(n>0){
+        take <- which((1:n - count) %% dec == 0)
+        
+        count <<- count+n
+        
+        ret <- db[take,, drop=FALSE]
+        attr(ret, 'TS') <- attr(db,'TS')[take]
+        ret
+      } else {
+        db
+      }
     }
   )
 }
