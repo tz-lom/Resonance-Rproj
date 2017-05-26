@@ -54,9 +54,20 @@ processor <- function(
       environment(online) <- env
       .processor_cache[[hash]] <- online;
       .processor_si_cache[[hash]] <- si;
-      result <- list()
-      SI(result) <- si
-      SI(result, 'online') <- TRUE
+      
+      if( class(si)=='multipleStreams' ){
+        result <- lapply(si, function(si){
+          ret <- list()
+          SI(ret) <- si
+          SI(ret, 'online') <- TRUE
+          ret
+        })
+      } else {
+        result <- list()
+        SI(result) <- si
+        SI(result, 'online') <- TRUE
+      }
+      
       return(result)
     } else {
       result <- if(is.null(offline)){
@@ -66,7 +77,15 @@ processor <- function(
         environment(offline) <- env
         offline(...)
       }
-      SI(result) <- si
+      
+      if(class(result)=='multipleStreams'){
+        result <- mapply(function(stream, si){
+          SI(stream) <- si
+          stream
+        }, result, si)
+      } else {
+        SI(result) <- si
+      }
       return(result);
     }
   }
@@ -74,7 +93,22 @@ processor <- function(
   {
     # perform online processing
     result <- do.call(.processor_cache[[hash]], inputs)
-    SI(result) <- .processor_si_cache[[hash]]
+    
+    if(class(result)=='multipleStreams'){
+      result <- mapply(function(stream, si){
+        SI(stream) <- si
+        stream
+      }, result, .processor_si_cache[[hash]])
+    } else {
+      SI(result) <- .processor_si_cache[[hash]]
+    }
+    
     return(result)
   }
+}
+
+multipleStreams <- function(...){
+  l <- list(...)
+  class(l) <- 'multipleStreams'
+  l
 }
