@@ -6,6 +6,7 @@ import(geigen)
 importFrom(digest, digest)
 importFrom(compiler, cmpfun)
 importFrom(zoo, rollapply)
+import(parallel)
 
 export("processor")
 export("to.channels")

@@ -9,7 +9,16 @@ run.online <- function(inputs, blocks, code){
     x
   })
   
+  blocks <- lapply(blocks, function(x){
+    SI(x)$online <- T
+    x
+  })
+  
   onPrepare(inputs, code)
+  
+  blockToId <- function(b){
+    which(sapply(inputs, identical, SI(b)))
+  }
   
   
   nextBlock <- function(x){
@@ -18,11 +27,15 @@ run.online <- function(inputs, blocks, code){
   
   nextBlock.DB.channels <- function(b){
     ts <- attr(b, 'TS')
-    onDataBlock.double(id = 1, vector = t(b), samples = nrow(b), timestamp = ts[[length(ts)]])
+    onDataBlock.double(id = blockToId(b), vector = t(b), samples = nrow(b), timestamp = ts[[length(ts)]])
   }
   
   nextBlock.DB.event <- function(b){
-    onDataBlock.message(id = 2, msg = as.character(b[[1]]), timestamp = attr(b[[1]], 'TS'))
+    onDataBlock.message(id = blockToId(b), msg = as.character(b[[1]]), timestamp = attr(b[[1]], 'TS'))
+  }
+  
+  nextBlock.DB.window <- function(b){
+    onDataBlock.window(id = blockToId(b), vector = b, timestamp=attr(b, 'TS'))
   }
   
   nextBlock.default <- function(b){

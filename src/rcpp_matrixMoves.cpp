@@ -108,7 +108,6 @@ void pushRows_top(NumericMatrix m, NumericMatrix p)
   
   int shift = p.nrow();
   
-  int rows = m.nrow()-shift;
   for(int row=m.nrow()-shift; row>=0; --row)
   {
     for(int col=cols-1; col>=0; --col)
@@ -193,44 +192,48 @@ void rowsCopy(NumericMatrix dest, int destBegin, NumericMatrix src, int srcBegin
   }
 }
 
-// [[Rcpp::export]]
-void replace_columns_block(NumericMatrix dest, int destRow, int destCol, NumericMatrix src)
+template <typename Type>
+void do_replace_columns_block(SEXP dest_sexp, int destRow, int destCol, NumericMatrix src)
 {
+  Type dest = as<Type>(dest_sexp);
   int srcR = src.nrow();
   int srcC = src.ncol();
   int destR = dest.nrow();
   int destC = dest.ncol();
   
-  int newR = 0, newC = 0;
+  if((srcR+destRow > destR) || (srcC+destCol > destC)) stop("target matrix is not big enough");
   
-  if(srcR+destRow > destR) newR = srcR+destRow;
-  if(srcC+destCol > destC) newC = srcC+destCol;
   
-  if(newC || newR)
+  for(int sc=0, dc=destCol; sc<srcC; ++sc,++dc)
   {
-    std::cout << "resize";
-    // resise destination
-    if(!newC) newC = destC;
-    if(!newR) newR = destR;
-    NumericMatrix N(newC, newR);
-    //N(Range(0, destR-1), Range(0, destC-1)). dest;
-    for(int r=0; r<destR; ++r)
-      for(int c=0; c<destC; ++c)
-        N(r, c) = dest(r, c);
-    dest = N;
-  }
-  
-  for(int dr=destRow, sr=0; sr<srcR; ++sr,++dr)
-  {
-    for(int sc=0, dc=destC; sc<srcC; ++sc,++dc)
+    for(int dr=destRow, sr=0; sr<srcR; ++sr,++dr)
     {
-      
       dest(dr, dc) = src(sr, sc);
-      std::cout << dest(dr,dc) << std::endl;
+      //std::cout << dest(dr,dc) << " " << sr << " " << sc<< " " << dr<< " " << dc << std::endl;
     }
   }
-  
-  //return dest;
+}
+
+// [[Rcpp::export]]
+void replace_columns_block(SEXP m, int destRow, int destCol, NumericMatrix src)
+{
+  switch(TYPEOF(m))
+  {
+  case INTSXP:
+    do_replace_columns_block<IntegerMatrix>(m, destRow, destCol, src);
+    break;
+  case REALSXP:
+    do_replace_columns_block<NumericMatrix>(m, destRow, destCol, src);
+    break;
+  case STRSXP:
+    do_replace_columns_block<StringMatrix>(m, destRow, destCol, src);
+    break;
+  case LGLSXP:
+    do_replace_columns_block<LogicalMatrix>(m, destRow, destCol, src);
+    break;
+  default:
+    stop("Unhandled type of matrix");
+  }
 }
 
 // [[Rcpp::export]]

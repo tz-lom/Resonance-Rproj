@@ -38,7 +38,7 @@ DB.event <- function(SI, timestamp, message){
 }
 
 DB.channels <- function(SI, timestamp, vector){
-  data <- matrix(vector, ncol=SI$channels, byrow = T)
+  data <- matrix(as.double(vector), ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
   } else {
@@ -73,6 +73,12 @@ DB.epoch <- function(SI, timestamp, vector){
 
 DB.something <- function(SI, timestamp, data){
   do.call(paste0('DB.', SI$type), list(SI, timestamp, data))
+}
+
+makeEmpty.window <- function(si){
+  ret <- list()
+  SI(ret) <- si
+  ret
 }
 
 makeEmpty.channels <- function(si){

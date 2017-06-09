@@ -21,7 +21,6 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
     },
     online = function(data, events){
       res <- list()
-      timestamps <- NULL
       #assign temporary signals and events
       if(nrow(data)>0)
       {
@@ -69,8 +68,9 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
         {
           if(index)
           {
-            res <- c(res, signal[index:(current-1), ])
-            timestamps <- append(timestamps, si.times[index:(current-1)])
+            ins <- signal[index:(current-1), ]
+            attr(ins, 'TS') <- si.times[index:(current-1)]
+            res <- c(res, list(ins))
           }
           index <<- current
         }
@@ -78,17 +78,13 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
         {
           if(index)
           {
-            res <- c(res, signal[index:(current-1), ])
-            timestamps <- append(timestamps, si.times[index:(current-1)])
+            ins <- signal[index:(current-1), ]
+            attr(ins, 'TS') <- si.times[index:(current-1)]
+            res <- c(res, list(ins))
             index <<- 0L
           }
         }
         evs <<- evs[-1]
-      }
-      
-      if(!is.null(res))
-      {
-        attr(res, 'TS') <- timestamps
       }
       
       res
