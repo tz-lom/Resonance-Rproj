@@ -15,8 +15,7 @@ Imports:
     signal (>= 0.7),
     compiler,
     digest,
-    zoo,
-    parallel
+    zoo
 LinkingTo: Rcpp
 VignetteBuilder: knitr
 
