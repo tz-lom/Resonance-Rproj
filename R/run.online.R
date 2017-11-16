@@ -51,6 +51,10 @@ run.online <- function(inputs, blocks, code){
   datas <- list()
   siNames <- list()
   
+  truncateClass <- function(block, si){
+    class(block) <- class(block)[class(block)!=si$type]
+  }
+  
   lapply(Q, function(x){
     if(x$cmd == 'createOutputStream'){
       L <- x$args
@@ -65,9 +69,31 @@ run.online <- function(inputs, blocks, code){
       
       if(is.matrix(data)) data <- as.vector(t(data))
       
-      datas[[siNames[[x$args$id]]]] <<- c(datas[[siNames[[x$args$id]]]], list(DB.something(si, attr(x$args$data, 'TS'), data)))
+      datas[[siNames[[x$args$id]]]] <<- c(
+        datas[[siNames[[x$args$id]]]], 
+        list(
+          truncateClass(
+            DB.something(
+              si,
+              attr(x$args$data, 'TS'),
+              data
+              ),
+            si
+            )
+          )
+      )
     }
   })
   
-  lapply(datas, function(bl) do.call(merge, bl))
+  if(length(datas)>0){
+    lapply(datas, function(bl) {
+      if(length(bl)>0){
+        do.call(merge, bl)
+      } else {
+        list()
+      }
+    })
+  } else {
+    list()
+  }
 }
