@@ -8,7 +8,7 @@ run.offline <- function(inputs, blocks, code) {
     }, blocks)
     
     if(length(F)){
-      do.call(merge, F)
+      do.call(DBcombine, F)
     }else{
       makeEmpty(si)
     }

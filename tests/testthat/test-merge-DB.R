@@ -1,4 +1,4 @@
-test_that("merge.DB.channels", {
+test_that("DBcombine.DB.channels", {
 
   si <- SI.channels(5, 20)
   
@@ -6,7 +6,7 @@ test_that("merge.DB.channels", {
   B <- DB.channels(si, 3+10*5E4, 26:75)
   C <- DB.channels(si, 3+19*5E4, 76:120)
   
-  M <- merge(A,B,C)
+  M <- DBcombine(A,B,C)
   O <- DB.channels(si, 3+19*5E4, 1:120)
   
   expect_equal(O, M)
@@ -19,7 +19,7 @@ test_that("merge.DB.event", {
   B <- DB.event(si, 5 , 'b')
   C <- DB.event(si, 12, 'c')
   
-  M <- merge(A,B,C)
+  M <- DBcombine(A,B,C)
   O <- list('a','b','c')
   attr(O[[1]], 'TS') <- 3 
   attr(O[[2]], 'TS') <- 5

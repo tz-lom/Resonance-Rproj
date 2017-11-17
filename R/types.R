@@ -103,7 +103,11 @@ makeEmpty <- function(si){
   do.call(paste("makeEmpty", si$type, sep="."), list(si))
 }
 
-merge.DB.channels <- function(x, ...){
+DBcombine <- function(...){
+  do.call(paste("DBcombine", class(..1)[[1]], sep="."), list(...))
+}
+
+DBcombine.DB.channels <- function(x, ...){
   ret <- rbind(x, ...)
   SI(ret) <- SI(x)
   ts <- c(attr(x, 'TS'), do.call(c, lapply(list(...), attr, 'TS')))
@@ -112,21 +116,21 @@ merge.DB.channels <- function(x, ...){
   ret
 }
 
-merge.DB.event <- function(x, ...){
+DBcombine.DB.event <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
   class(ret) <- class(x)
   ret
 }
 
-merge.DB.window <- function(x, ...){
+DBcombine.DB.window <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
   class(ret) <- class(x)
   ret
 }
 
-merge.DB.epoch <- function(x, ...){
+DBcombine.DB.epoch <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
   class(ret) <- class(x)

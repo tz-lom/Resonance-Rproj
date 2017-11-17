@@ -7,13 +7,13 @@ pipe.transform.channelsToEvents <- function(input, transform){
     },
     online = function(input){
       if(nrow(input)>0) {
-        ind <- 1
-        apply(input,1, function(x){
-          y <- transform(x)
-          attr(y, 'TS') <- attr(input, 'TS')[[ind]]
-          ind <<- ind+1
-          y
-        })
+        TS <- attr(input, 'TS')
+        ret <- vector("list", length = nrow(input))
+        for(i in 1:nrow(input)){
+          ret[[i]] <- transform(input[i,])
+          attr(ret[[i]], 'TS') <- TS[[i]]
+        }
+        ret
       } else {
         list()
       }

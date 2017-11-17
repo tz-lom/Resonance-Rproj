@@ -17,6 +17,7 @@ exportPattern("^source\\..+")
 export("pipeline")
 export("calcCSP")
 export("signalPreparation")
+export("DBcombine")
 exportPattern("^SI.*")
 exportPattern(".*")
 

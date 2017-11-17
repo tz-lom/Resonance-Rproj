@@ -52,7 +52,8 @@ run.online <- function(inputs, blocks, code){
   siNames <- list()
   
   truncateClass <- function(block, si){
-    class(block) <- class(block)[class(block)!=si$type]
+    class(block) <- class(block)[class(block)!=paste0("DB.",si$type)]
+    block
   }
   
   lapply(Q, function(x){
@@ -72,13 +73,10 @@ run.online <- function(inputs, blocks, code){
       datas[[siNames[[x$args$id]]]] <<- c(
         datas[[siNames[[x$args$id]]]], 
         list(
-          truncateClass(
-            DB.something(
-              si,
-              attr(x$args$data, 'TS'),
-              data
-              ),
-            si
+          DB.something(
+            si,
+            attr(x$args$data, 'TS'),
+            data
             )
           )
       )
@@ -88,7 +86,8 @@ run.online <- function(inputs, blocks, code){
   if(length(datas)>0){
     lapply(datas, function(bl) {
       if(length(bl)>0){
-        do.call(merge, bl)
+        merged <- do.call(DBcombine, bl)
+        truncateClass(merged, SI(merged))
       } else {
         list()
       }

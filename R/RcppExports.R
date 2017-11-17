@@ -5,14 +5,6 @@ call_hash <- function(s) {
     .Call('Resonance_call_hash', PACKAGE = 'Resonance', s)
 }
 
-prepareMvFFT <- function(rows, columns) {
-    .Call('Resonance_prepareMvFFT', PACKAGE = 'Resonance', rows, columns)
-}
-
-performMvFFT <- function(xpc, data) {
-    .Call('Resonance_performMvFFT', PACKAGE = 'Resonance', xpc, data)
-}
-
 forceCopy <- function(m) {
     .Call('Resonance_forceCopy', PACKAGE = 'Resonance', m)
 }

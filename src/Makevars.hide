@@ -1,0 +1,7 @@
+#PKG_CPPFLAGS= 
+# $(SHLIB_PTHREAD_FLAGS)
+# -lfftw3_threads
+#PKG_LIBS=  -lfftw3 -lm -lboost_thread
+# $(SHLIB_PTHREAD_FLAGS)
+
+#all: $(SHLIB)

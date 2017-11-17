@@ -1,4 +1,0 @@
-PKG_CPPFLAGS= $(SHLIB_PTHREAD_FLAGS)
-PKG_LIBS= -llfftw3_threads -lfftw3 -lm $(SHLIB_PTHREAD_FLAGS)
-
-all: $(SHLIB)
