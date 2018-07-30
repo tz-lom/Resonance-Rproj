@@ -2,38 +2,38 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 call_hash <- function(s) {
-    .Call('Resonance_call_hash', PACKAGE = 'Resonance', s)
+    .Call('_Resonance_call_hash', PACKAGE = 'Resonance', s)
 }
 
 forceCopy <- function(m) {
-    .Call('Resonance_forceCopy', PACKAGE = 'Resonance', m)
+    .Call('_Resonance_forceCopy', PACKAGE = 'Resonance', m)
 }
 
 shiftRows <- function(m, shift) {
-    invisible(.Call('Resonance_shiftRows', PACKAGE = 'Resonance', m, shift))
+    invisible(.Call('_Resonance_shiftRows', PACKAGE = 'Resonance', m, shift))
 }
 
 pushRows_bottom <- function(m, p) {
-    invisible(.Call('Resonance_pushRows_bottom', PACKAGE = 'Resonance', m, p))
+    invisible(.Call('_Resonance_pushRows_bottom', PACKAGE = 'Resonance', m, p))
 }
 
 pushRows_top <- function(m, p) {
-    invisible(.Call('Resonance_pushRows_top', PACKAGE = 'Resonance', m, p))
+    invisible(.Call('_Resonance_pushRows_top', PACKAGE = 'Resonance', m, p))
 }
 
 push_slice_rows_back <- function(dest, src, slicePos, sliceSize) {
-    invisible(.Call('Resonance_push_slice_rows_back', PACKAGE = 'Resonance', dest, src, slicePos, sliceSize))
+    invisible(.Call('_Resonance_push_slice_rows_back', PACKAGE = 'Resonance', dest, src, slicePos, sliceSize))
 }
 
 rowsCopy <- function(dest, destBegin, src, srcBegin, srcSize) {
-    invisible(.Call('Resonance_rowsCopy', PACKAGE = 'Resonance', dest, destBegin, src, srcBegin, srcSize))
+    invisible(.Call('_Resonance_rowsCopy', PACKAGE = 'Resonance', dest, destBegin, src, srcBegin, srcSize))
 }
 
 replace_columns_block <- function(m, destRow, destCol, src) {
-    invisible(.Call('Resonance_replace_columns_block', PACKAGE = 'Resonance', m, destRow, destCol, src))
+    invisible(.Call('_Resonance_replace_columns_block', PACKAGE = 'Resonance', m, destRow, destCol, src))
 }
 
 copyColumns <- function(dest, src, cols) {
-    invisible(.Call('Resonance_copyColumns', PACKAGE = 'Resonance', dest, src, cols))
+    invisible(.Call('_Resonance_copyColumns', PACKAGE = 'Resonance', dest, src, cols))
 }
 
