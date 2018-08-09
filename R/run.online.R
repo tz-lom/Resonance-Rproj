@@ -1,3 +1,8 @@
+truncateClass <- function(block, si){
+  class(block) <- class(block)[class(block)!=paste0("DB.",si$type)]
+  block
+}
+
 run.online <- function(inputs, blocks, code){
   
   require(Resonate)
@@ -38,6 +43,10 @@ run.online <- function(inputs, blocks, code){
     onDataBlock.window(id = blockToId(b), vector = b, timestamp=attr(b, 'TS'))
   }
   
+  nextBlock.DB.epoch <- function(b){
+    onDataBlock.epoch(id=blockToId(b), vector=b, timestamp=attr(b, 'TS'))
+  }
+  
   nextBlock.default <- function(b){
     stop('Unknown block type')
   }
@@ -50,11 +59,6 @@ run.online <- function(inputs, blocks, code){
   sis <- list()
   datas <- list()
   siNames <- list()
-  
-  truncateClass <- function(block, si){
-    class(block) <- class(block)[class(block)!=paste0("DB.",si$type)]
-    block
-  }
   
   lapply(Q, function(x){
     if(x$cmd == 'createOutputStream'){

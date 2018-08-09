@@ -68,7 +68,7 @@ DB.epoch <- function(SI, timestamp, vector){
   ret <- list(data)
   class(ret) <- c('DB.epoch','matrix')
   SI(ret) <- SI
-  data
+  ret
 }
 
 DB.something <- function(SI, timestamp, data){

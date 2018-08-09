@@ -1,3 +1,5 @@
+context("DBcombine")
+
 test_that("DBcombine.DB.channels", {
 
   si <- SI.channels(5, 20)

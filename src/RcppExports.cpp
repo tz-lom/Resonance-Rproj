@@ -113,6 +113,9 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP upfirdn__apply_multichannel(SEXP, SEXP);
+RcppExport SEXP upfirdn__new(SEXP, SEXP, SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_Resonance_call_hash", (DL_FUNC) &_Resonance_call_hash, 1},
     {"_Resonance_forceCopy", (DL_FUNC) &_Resonance_forceCopy, 1},
@@ -123,6 +126,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Resonance_rowsCopy", (DL_FUNC) &_Resonance_rowsCopy, 5},
     {"_Resonance_replace_columns_block", (DL_FUNC) &_Resonance_replace_columns_block, 4},
     {"_Resonance_copyColumns", (DL_FUNC) &_Resonance_copyColumns, 3},
+    {"upfirdn__apply_multichannel",      (DL_FUNC) &upfirdn__apply_multichannel,      2},
+    {"upfirdn__new",                     (DL_FUNC) &upfirdn__new,                     3},
     {NULL, NULL, 0}
 };
 
