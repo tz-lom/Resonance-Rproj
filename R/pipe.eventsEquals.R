@@ -1,5 +1,10 @@
+#' Transforms events to boolean
+#' By rule event == match
 #'
+#' @param input event stream
+#' @param match value to match
 #'
+#' @return event stream
 pipe.eventsEquals <- function(input, match){
   processor(
     input,

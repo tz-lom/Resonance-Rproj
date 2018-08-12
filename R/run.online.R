@@ -1,13 +1,9 @@
-truncateClass <- function(block, si){
-  class(block) <- class(block)[class(block)!=paste0("DB.",si$type)]
+removeBlockType <- function(block){
+  class(block) <- class(block)[class(block)!=paste0("DB.",SI(block)$type)]
   block
 }
 
 run.online <- function(inputs, blocks, code){
-  
-  require(Resonate)
-  
-  #empty <- lapply(inputs, makeEmpty)
   
   inputs <- lapply(inputs, function(x){
     x$online <- T
@@ -32,7 +28,7 @@ run.online <- function(inputs, blocks, code){
   
   nextBlock.DB.channels <- function(b){
     ts <- attr(b, 'TS')
-    onDataBlock.double(id = blockToId(b), vector = t(b), samples = nrow(b), timestamp = ts[[length(ts)]])
+    onDataBlock.channels(id = blockToId(b), vector = t(b), samples = nrow(b), timestamp = ts[[length(ts)]])
   }
   
   nextBlock.DB.event <- function(b){
@@ -63,16 +59,14 @@ run.online <- function(inputs, blocks, code){
   lapply(Q, function(x){
     if(x$cmd == 'createOutputStream'){
       L <- x$args
-      sis[[L$id]] <<- L[names(L)!='id' & names(L)!='name' & names(L)!='online']
+      sis[[L$id]] <<- L[!(names(L) %in% c('id', 'name', 'online'))]
       siNames[[L$id]] <<- L$name
-      datas[[L$name]] <<- list()
+      datas[[L$name]] <<- list(makeEmpty(sis[[L$id]]))
     }
     if(x$cmd == 'sendBlockToStream'){
       si <- sis[[x$args$id]]
       
       data <- x$args$data
-      
-      if(is.matrix(data)) data <- as.vector(t(data))
       
       datas[[siNames[[x$args$id]]]] <<- c(
         datas[[siNames[[x$args$id]]]], 
@@ -91,7 +85,7 @@ run.online <- function(inputs, blocks, code){
     lapply(datas, function(bl) {
       if(length(bl)>0){
         merged <- do.call(DBcombine, bl)
-        truncateClass(merged, SI(merged))
+        removeBlockType(merged)
       } else {
         list()
       }

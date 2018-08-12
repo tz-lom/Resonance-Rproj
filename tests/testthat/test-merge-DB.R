@@ -1,6 +1,7 @@
 context("DBcombine")
 
-test_that("DBcombine.DB.channels", {
+# @todo: empty tests for channels
+test_that("channels", {
 
   si <- SI.channels(5, 20)
 
@@ -14,21 +15,85 @@ test_that("DBcombine.DB.channels", {
   expect_equal(O, M)
 })
 
-test_that("merge.DB.event", {
+test_that("event", {
   si <- SI.event()
 
-  A <- DB.event(si, 3 , 'a')
-  B <- DB.event(si, 5 , 'b')
-  C <- DB.event(si, 12, 'c')
+  blocks <- list(
+    DB.event(si, 3 , 'a'),
+    DB.event(si, 5 , 'b'),
+    makeEmpty(si),
+    DB.event(si, 12, 'c')
+  )
 
-  M <- DBcombine(A,B,C)
-  O <- list('a','b','c')
-  attr(O[[1]], 'TS') <- 3
-  attr(O[[2]], 'TS') <- 5
-  attr(O[[3]], 'TS') <- 12
-  SI(O) <- si
-  class(O) <- 'DB.event'
+  result <- do.call(DBcombine, blocks)
+  
+  target <- list('a','b','c')
+  attr(target[[1]], 'TS') <- 3
+  attr(target[[2]], 'TS') <- 5
+  attr(target[[3]], 'TS') <- 12
+  SI(target) <- si
+  class(target) <- 'DB.event'
 
-  expect_equal(O, M)
+  expect_equal(result, target)
+})
+
+# test_that("epoch", {
+#   si <- SI.epoch(2, 30)
+#   
+#   blocks <- list(
+#     DB.epoch(si, 3 , 1:30),
+#     DB.epoch(si, 5000 , 31:60),
+#     makeEmpty(si),
+#     DB.epoch(si, 12000, 61:90)
+#   )
+#   
+#   result <- do.call(DBcombine, blocks)
+#   
+#   target <- list('a','b','c')
+#   attr(target[[1]], 'TS') <- 3
+#   attr(target[[2]], 'TS') <- 5
+#   attr(target[[3]], 'TS') <- 12
+#   SI(target) <- si
+#   class(target) <- 'DB.event'
+#   
+#   expect_equal(result, target)
+# })
+
+test_that("event empty", {
+  si <- SI.event()
+  
+  blocks <- list(
+    makeEmpty(si),
+    makeEmpty(si)
+  )
+  
+  result <- do.call(DBcombine, blocks)
+  
+  expect_equal(result, makeEmpty(si))
+})
+
+test_that("event empty 1", {
+  si <- SI.event()
+  
+  blocks <- list(
+    makeEmpty(si)
+  )
+  
+  result <- do.call(DBcombine, blocks)
+  
+  expect_equal(result, makeEmpty(si))
+})
+
+test_that("event", {
+  si <- SI.event()
+  
+  blocks <- list(
+    makeEmpty(si),
+    makeEmpty(si)
+  )
+  
+  result <- do.call(DBcombine, blocks)
+  
+  expect_equal(result, makeEmpty(si))
 })
 

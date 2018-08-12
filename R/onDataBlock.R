@@ -18,16 +18,20 @@ onDataBlock.message <- function(id, msg, timestamp){
   onDataBlock(id, list(msg))
 }
 
-onDataBlock.double <- function(id, vector, samples, timestamp){
+onDataBlock.channels <- function(id, vector, samples, timestamp){
   data <- matrix(vector, nrow=samples, byrow = T)
   attr(data, 'TS') <- seq(to=timestamp, by=1E6/.globals$inputs[[id]]$samplingRate, length.out=samples)
   SI(data) <- .globals$inputs[[id]]
   onDataBlock(id, data)
 }
 
-onDataBlock.epoch <- function(id, vector, sample, timestamp){
+onDataBlock.epoch <- function(id, vector, samples, timestamp){
   data <- matrix(vector, nrow=samples, byrow = T)
   attr(data, 'TS') <- seq(to=timestamp, by=1E6/.globals$inputs[[id]]$samplingRate, length.out=samples)
   SI(data) <- .globals$inputs[[id]]
   onDataBlock(id, data)
+}
+
+onDataBlock.window <- function(id, vector, samples, timestamp){
+  
 }

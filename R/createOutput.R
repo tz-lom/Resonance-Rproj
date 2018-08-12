@@ -28,8 +28,22 @@ createOutput <- function(data, name){
 
           list()
         }
+      } 
+      else if(SI.is.event(data)) 
+        {
+        env$cb <- function(data){
+          for(d in data){
+            addToQueue(
+              "sendBlockToStream",
+              id = id,
+              data= d
+            )
+          }
+
+          list()
+        }
       }
-      if(SI.is.event(data))
+      else if(SI.is.window(data))
       {
         env$cb <- function(data){
           for(d in data){
@@ -43,19 +57,21 @@ createOutput <- function(data, name){
           list()
         }
       }
-      if(SI.is.window(data))
+      else if(SI.is.epoch(data))
       {
         env$cb <- function(data){
           for(d in data){
             addToQueue(
               "sendBlockToStream",
-              id = id,
-              data= d
+              id=id,
+              data=d
             )
           }
-
-          list()
         }
+      }
+      else
+      {
+        stop("[createOutput] Unsupported stream type=",SI(data)$type, call.=F)
       }
 
       id

@@ -38,7 +38,7 @@ DB.event <- function(SI, timestamp, message){
 }
 
 DB.channels <- function(SI, timestamp, vector){
-  data <- matrix(as.double(vector), ncol=SI$channels, byrow = T)
+  data <- if(is.matrix(vector)) vector else matrix(vector, ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
   } else {
@@ -50,7 +50,9 @@ DB.channels <- function(SI, timestamp, vector){
 }
 
 DB.window <- function(SI, timestamp, vector){
-  window <- matrix(vector, nrow=SI$samples, byrow = T)
+  window <- if(is.matrix(vector)) vector else matrix(vector, nrow=SI$samples, byrow = T)
+  # assert_that(ncol(window)==SI$channels)
+  # assert_that(nrow(window)==SI$samples)
   attr(window, 'TS') <- timestamp
   ret <- list(window)
   class(ret) <- c('DB.window', 'matrix')
@@ -59,7 +61,7 @@ DB.window <- function(SI, timestamp, vector){
 }
 
 DB.epoch <- function(SI, timestamp, vector){
-  data <- matrix(vector, ncol=SI$channels, byrow=T)
+  data <- if(is.matrix(vector)) vector else matrix(vector, ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
   } else {
@@ -78,24 +80,28 @@ DB.something <- function(SI, timestamp, data){
 makeEmpty.window <- function(si){
   ret <- list()
   SI(ret) <- si
+  class(ret) <- c('DB.window','matrix')
   ret
 }
 
 makeEmpty.channels <- function(si){
   ret <- matrix(0.0, nrow=0, ncol=si$channels)
   SI(ret) <- si
+  class(ret) <- c('DB.channels','matrix')
   ret
 }
 
 makeEmpty.event <- function(si){
   ret <- list()
   SI(ret) <- si
+  class(ret) <- 'DB.event'
   ret
 }
 
 makeEmpty.epoch <- function(si){
   ret <- list()
   SI(ret) <- si
+  class(ret) <- c('DB.epoch','matrix')
   ret
 }
 

@@ -1,6 +1,6 @@
-context("cross.")
-
-# test_that("cross.epochByEvent", {
+# context("cross.epochByEvent")
+# 
+# test_that("test1", {
 #   Csi <- SI.channels(2, 100)
 #   Esi <- SI.event()
 # 
@@ -12,16 +12,14 @@ context("cross.")
 #   )
 # 
 # 
-#   code <- function(){
-#     
+#   code <- "
 #     process <- function(){
 #       createOutput(cross.epochByEvent(input(1), input(2)), 'out')
 #     }
-#   
-#   }
+#   "
 # 
-#   A <- run.online(list(Csi, Esi), blocks, code)
-#   B <- run.offline(list(Csi, Esi), blocks, code)
+#   online <- run.online(list(Csi, Esi), blocks, code)
+#   offline <- run.offline(list(Csi, Esi), blocks, code)
 # 
-#   expect_equal(A, B)
+#   expect_equal(online, offline)
 # })

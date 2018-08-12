@@ -1,5 +1,3 @@
-#' 
-#'
 pipe.references <- function(input, refs){
   
   processor(
