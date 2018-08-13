@@ -37,28 +37,6 @@ test_that("event", {
   expect_equal(result, target)
 })
 
-# test_that("epoch", {
-#   si <- SI.epoch(2, 30)
-#   
-#   blocks <- list(
-#     DB.epoch(si, 3 , 1:30),
-#     DB.epoch(si, 5000 , 31:60),
-#     makeEmpty(si),
-#     DB.epoch(si, 12000, 61:90)
-#   )
-#   
-#   result <- do.call(DBcombine, blocks)
-#   
-#   target <- list('a','b','c')
-#   attr(target[[1]], 'TS') <- 3
-#   attr(target[[2]], 'TS') <- 5
-#   attr(target[[3]], 'TS') <- 12
-#   SI(target) <- si
-#   class(target) <- 'DB.event'
-#   
-#   expect_equal(result, target)
-# })
-
 test_that("event empty", {
   si <- SI.event()
   
@@ -84,8 +62,34 @@ test_that("event empty 1", {
   expect_equal(result, makeEmpty(si))
 })
 
-test_that("event", {
-  si <- SI.event()
+test_that("epoch", {
+  si <- SI.epoch(2, 30)
+  
+  blocks <- list(
+    DB.epoch(si, 1E9 , 1:30),
+    DB.epoch(si, 4E9 , 31:42),
+    makeEmpty(si),
+    DB.epoch(si, 12E9, 61:90)
+  )
+  
+  result <- do.call(DBcombine, blocks)
+  
+  target <- list(
+    matrix(as.double(1:30),  ncol=2, byrow=T),
+    matrix(as.double(31:42), ncol=2, byrow=T),
+    matrix(as.double(61:90), ncol=2, byrow=T)
+  )
+  attr(target[[1]], 'TS') <- seq(to=1E9, by=1E6/30, length.out=15)
+  attr(target[[2]], 'TS') <- seq(to=4E9, by=1E6/30, length.out=6)
+  attr(target[[3]], 'TS') <- seq(to=12E9, by=1E6/30, length.out=15)
+  SI(target) <- si
+  class(target) <- 'DB.epoch'
+  
+  expect_equal(result, target)
+})
+
+test_that("epoch empty", {
+  si <- SI.epoch(2, 30)
   
   blocks <- list(
     makeEmpty(si),
@@ -97,3 +101,14 @@ test_that("event", {
   expect_equal(result, makeEmpty(si))
 })
 
+test_that("epoch empty 1", {
+  si <- SI.epoch(2, 30)
+  
+  blocks <- list(
+    makeEmpty(si)
+  )
+  
+  result <- do.call(DBcombine, blocks)
+  
+  expect_equal(result, makeEmpty(si))
+})

@@ -61,7 +61,7 @@ DB.window <- function(SI, timestamp, vector){
 }
 
 DB.epoch <- function(SI, timestamp, vector){
-  data <- if(is.matrix(vector)) vector else matrix(vector, ncol=SI$channels, byrow = T)
+  data <- if(is.matrix(vector)) vector else matrix(as.double(vector), ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
   } else {
@@ -80,7 +80,7 @@ DB.something <- function(SI, timestamp, data){
 makeEmpty.window <- function(si){
   ret <- list()
   SI(ret) <- si
-  class(ret) <- c('DB.window','matrix')
+  class(ret) <- 'DB.window'
   ret
 }
 
@@ -101,7 +101,7 @@ makeEmpty.event <- function(si){
 makeEmpty.epoch <- function(si){
   ret <- list()
   SI(ret) <- si
-  class(ret) <- c('DB.epoch','matrix')
+  class(ret) <- 'DB.epoch'
   ret
 }
 
@@ -132,14 +132,14 @@ DBcombine.DB.event <- function(x, ...){
 DBcombine.DB.window <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
-  class(ret) <- class(x)
+  class(ret) <- 'DB.window'
   ret
 }
 
 DBcombine.DB.epoch <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
-  class(ret) <- class(x)
+  class(ret) <- 'DB.epoch'
   ret
 }
 
