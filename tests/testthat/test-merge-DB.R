@@ -32,7 +32,6 @@ test_that("event", {
   attr(target[[2]], 'TS') <- 5
   attr(target[[3]], 'TS') <- 12
   SI(target) <- si
-  class(target) <- 'DB.event'
 
   expect_equal(result, target)
 })
@@ -83,8 +82,7 @@ test_that("epoch", {
   attr(target[[2]], 'TS') <- seq(to=4E9, by=1E6/30, length.out=6)
   attr(target[[3]], 'TS') <- seq(to=12E9, by=1E6/30, length.out=15)
   SI(target) <- si
-  class(target) <- 'DB.epoch'
-  
+
   expect_equal(result, target)
 })
 

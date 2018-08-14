@@ -23,23 +23,23 @@ run.online <- function(inputs, blocks, code){
   
   
   nextBlock <- function(x){
-    do.call(paste("nextBlock", class(x)[[1]], sep="."), list(x))
+    do.call(paste("nextBlock", SI(x)$type, sep="."), list(x))
   }
   
-  nextBlock.DB.channels <- function(b){
+  nextBlock.channels <- function(b){
     ts <- attr(b, 'TS')
     onDataBlock.channels(id = blockToId(b), vector = t(b), samples = nrow(b), timestamp = ts[[length(ts)]])
   }
   
-  nextBlock.DB.event <- function(b){
+  nextBlock.event <- function(b){
     onDataBlock.message(id = blockToId(b), msg = as.character(b[[1]]), timestamp = attr(b[[1]], 'TS'))
   }
   
-  nextBlock.DB.window <- function(b){
+  nextBlock.window <- function(b){
     onDataBlock.window(id = blockToId(b), vector = b, timestamp=attr(b, 'TS'))
   }
   
-  nextBlock.DB.epoch <- function(b){
+  nextBlock.epoch <- function(b){
     onDataBlock.epoch(id=blockToId(b), vector=b, timestamp=attr(b, 'TS'))
   }
   

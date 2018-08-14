@@ -33,7 +33,6 @@ DB.event <- function(SI, timestamp, message){
   attr(message, 'TS') <- timestamp
   ret <- list(message)
   SI(ret) <- SI
-  class(ret) <- 'DB.event'
   ret
 }
 
@@ -44,7 +43,6 @@ DB.channels <- function(SI, timestamp, vector){
   } else {
     attr(data, 'TS') <- timestamp
   }
-  class(data) <- c('DB.channels','matrix')
   SI(data) <- SI
   data
 }
@@ -55,7 +53,6 @@ DB.window <- function(SI, timestamp, vector){
   # assert_that(nrow(window)==SI$samples)
   attr(window, 'TS') <- timestamp
   ret <- list(window)
-  class(ret) <- c('DB.window', 'matrix')
   SI(ret) <- SI
   ret
 }
@@ -68,7 +65,6 @@ DB.epoch <- function(SI, timestamp, vector){
     attr(data, 'TS') <- timestamp
   }
   ret <- list(data)
-  class(ret) <- c('DB.epoch','matrix')
   SI(ret) <- SI
   ret
 }
@@ -80,28 +76,24 @@ DB.something <- function(SI, timestamp, data){
 makeEmpty.window <- function(si){
   ret <- list()
   SI(ret) <- si
-  class(ret) <- 'DB.window'
   ret
 }
 
 makeEmpty.channels <- function(si){
   ret <- matrix(0.0, nrow=0, ncol=si$channels)
   SI(ret) <- si
-  class(ret) <- c('DB.channels','matrix')
   ret
 }
 
 makeEmpty.event <- function(si){
   ret <- list()
   SI(ret) <- si
-  class(ret) <- 'DB.event'
   ret
 }
 
 makeEmpty.epoch <- function(si){
   ret <- list()
   SI(ret) <- si
-  class(ret) <- 'DB.epoch'
   ret
 }
 
@@ -110,36 +102,33 @@ makeEmpty <- function(si){
 }
 
 DBcombine <- function(...){
-  do.call(paste("DBcombine", class(..1)[[1]], sep="."), list(...))
+  stopifnot(length(unique(lapply(list(...), SI)))==1)
+  do.call(paste("DBcombine", SI(..1)$type, sep="."), list(...))
 }
 
-DBcombine.DB.channels <- function(x, ...){
+DBcombine.channels <- function(x, ...){
   ret <- rbind(x, ...)
   SI(ret) <- SI(x)
   ts <- c(attr(x, 'TS'), do.call(c, lapply(list(...), attr, 'TS')))
   attr(ret, 'TS') <- ts
-  class(ret) <- class(x)
   ret
 }
 
-DBcombine.DB.event <- function(x, ...){
+DBcombine.event <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
-  class(ret) <- class(x)
   ret
 }
 
-DBcombine.DB.window <- function(x, ...){
+DBcombine.window <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
-  class(ret) <- 'DB.window'
   ret
 }
 
-DBcombine.DB.epoch <- function(x, ...){
+DBcombine.epoch <- function(x, ...){
   ret <- c(x, ...)
   SI(ret) <- SI(x)
-  class(ret) <- 'DB.epoch'
   ret
 }
 
