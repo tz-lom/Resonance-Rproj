@@ -1,8 +1,3 @@
-removeBlockType <- function(block){
-  class(block) <- class(block)[class(block)!=paste0("DB.",SI(block)$type)]
-  block
-}
-
 run.online <- function(inputs, blocks, code){
   
   inputs <- lapply(inputs, function(x){
@@ -85,7 +80,6 @@ run.online <- function(inputs, blocks, code){
     lapply(datas, function(bl) {
       if(length(bl)>0){
         merged <- do.call(DBcombine, bl)
-        removeBlockType(merged)
       } else {
         list()
       }

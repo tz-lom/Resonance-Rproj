@@ -25,7 +25,6 @@ createOutput <- function(data, name){
               data= data
             )
           }
-
           list()
         }
       } 
@@ -39,7 +38,6 @@ createOutput <- function(data, name){
               data= d
             )
           }
-
           list()
         }
       }
@@ -53,7 +51,6 @@ createOutput <- function(data, name){
               data= d
             )
           }
-
           list()
         }
       }
@@ -67,6 +64,7 @@ createOutput <- function(data, name){
               data=d
             )
           }
+          list()
         }
       }
       else
@@ -74,7 +72,7 @@ createOutput <- function(data, name){
         stop("[createOutput] Unsupported stream type=",SI(data)$type, call.=F)
       }
 
-      id
+      SI.outputStream(name, id)
 
     },
     online = function(data){

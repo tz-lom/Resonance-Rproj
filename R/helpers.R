@@ -63,8 +63,7 @@ processor <- function(
           ret
         })
       } else {
-        result <- list()
-        SI(result) <- si
+        result <- makeEmpty(si)
         SI(result, 'online') <- TRUE
       }
       

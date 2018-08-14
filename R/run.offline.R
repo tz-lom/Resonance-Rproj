@@ -27,7 +27,7 @@ run.offline <- function(inputs, blocks, code) {
   results <- list()
   
   env$createOutput <- function(out, name){
-    results[[name]] <<- removeBlockType(out)
+    results[[name]] <<- out
   }
   
   if(!is.language(code)) code <- parse(text=code)

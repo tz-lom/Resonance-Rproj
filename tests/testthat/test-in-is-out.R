@@ -5,17 +5,12 @@ test <- function(si, blocks){
   online <- run.online(list(si), blocks, code)
   offline <- run.offline(list(si), blocks, code)
 
-  if(length(blocks)>0){
-    merged <- do.call(DBcombine, blocks)
-    merged <- Resonance:::removeBlockType(merged)
-    origin <- list(out=merged)
-    expect_equal(online, origin)
+  origin <- if(length(blocks)>0){
+    list(out=do.call(DBcombine, blocks))
   } else {
-    merged <- makeEmpty(si)
-    merged <- Resonance:::removeBlockType(merged)
-    origin <- list(out=merged)
-    expect_equal(online, origin)
+    list(out=makeEmpty(si))
   }
+  expect_equal(online, origin)
   expect_equal(online, offline)
 }
 

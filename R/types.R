@@ -29,6 +29,14 @@ SI.epoch <- function(channels, samplingRate){
   )
 }
 
+SI.outputStream <- function(name, id){
+  list(
+    type='outputStream',
+    name=name,
+    id=id
+  )
+}
+
 DB.event <- function(SI, timestamp, message){
   attr(message, 'TS') <- timestamp
   ret <- list(message)
@@ -92,6 +100,12 @@ makeEmpty.event <- function(si){
 }
 
 makeEmpty.epoch <- function(si){
+  ret <- list()
+  SI(ret) <- si
+  ret
+}
+
+makeEmpty.outputStream <- function(si){
   ret <- list()
   SI(ret) <- si
   ret
