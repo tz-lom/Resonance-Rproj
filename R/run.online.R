@@ -27,7 +27,7 @@ run.online <- function(inputs, blocks, code){
   }
   
   nextBlock.event <- function(b){
-    onDataBlock.message(id = blockToId(b), msg = as.character(b[[1]]), timestamp = attr(b[[1]], 'TS'))
+    onDataBlock.message(id = blockToId(b), msg = b[[1]], timestamp = attr(b[[1]], 'TS'))
   }
   
   nextBlock.window <- function(b){
