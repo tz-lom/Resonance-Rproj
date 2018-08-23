@@ -39,52 +39,38 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
       
       if(length(events))
       {
-        evs <<- c(evs, 
-                  lapply(events, function(e){
-                    r <- list(type = all(e))
-                    if(r$type){
-                      r$time <- attr(e, 'TS')+shiftT
-                    } else {
-                      r$time <- attr(e, 'TS')+shiftF
-                    }
-                    r
-                  })
-        )
+        newEvs <- lapply(
+          events, 
+          function(e){
+            r <- list(type = all(e))
+            r$time <- attr(e, 'TS')+(if(r$type) shiftT else shiftF)
+            r
+          })
         
-        # normalize event sequence: must be T F T F T ...
-        filt <- c(evs[[1]]$type,
-                  diff(sapply(evs, `[[`, 'type'))!=0)
-        evs <<- evs[filt]
+        # we want to remove repetitions of the evens
+        # need to take to account if the last event if buffer T or F
+        newEvs <- newEvs[diff(c(
+          length(evs) %% 2==1, # last event in the buffer
+          sapply(newEvs, `[[`, 'type')
+        )) != 0 ]
+        
+        evs <<- c(evs, sapply(newEvs, `[[`, 'time'))
       }
       
-      
-      while( length(evs) && length(si.times) &&
-             evs[[1]]$time < si.times[[length(si.times)]]
-      )
+      while( length(evs)>1 && length(si.times))
       {
-        current <- which(si.times >= evs[[1]]$time)[[1]]
-        
-        if(evs[[1]]$type)
+        begin <- findInterval(evs[[1]], si.times)
+        end <- findInterval(evs[[2]], si.times)
+
+        if((begin>0) && (end < length(si.times)))
         {
-          if(index)
-          {
-            ins <- signal[index:(current-1), ]
-            attr(ins, 'TS') <- si.times[index:(current-1)]
-            res <- c(res, list(ins))
-          }
-          index <<- current
+          range <- (begin+1):end
+          ins <- signal[range,, drop=F]
+          attr(ins, 'TS') <- si.times[range]
+          res <- c(res, list(ins))
+          
+          evs <<- evs[-(1:2)]
         }
-        else
-        {
-          if(index)
-          {
-            ins <- signal[index:(current-1), ]
-            attr(ins, 'TS') <- si.times[index:(current-1)]
-            res <- c(res, list(ins))
-            index <<- 0L
-          }
-        }
-        evs <<- evs[-1]
       }
       
       res
