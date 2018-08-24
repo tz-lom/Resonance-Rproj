@@ -84,7 +84,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
             # get window and move on
             wnd <- signal[pos + windowSelector, , drop=F]
             attr(wnd, 'TS') <- si.times[pos + windowSelector]
-            attr(wnd, 'byEvent') <- grabSampleQueue[[1]]
+            # attr(wnd, 'byEvent') <- grabSampleQueue[[1]]
             
             grabSampleQueue <<- grabSampleQueue[-1]
             

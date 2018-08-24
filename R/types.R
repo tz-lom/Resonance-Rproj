@@ -56,11 +56,15 @@ DB.channels <- function(SI, timestamp, vector){
 }
 
 DB.window <- function(SI, timestamp, vector){
-  window <- if(is.matrix(vector)) vector else matrix(vector, nrow=SI$samples, byrow = T)
-  # assert_that(ncol(window)==SI$channels)
-  # assert_that(nrow(window)==SI$samples)
-  attr(window, 'TS') <- timestamp
-  ret <- list(window)
+  data <- if(is.matrix(vector)) vector else matrix(vector, nrow=SI$samples, byrow = T)
+  # assert_that(ncol(data)==SI$channels)
+  # assert_that(nrow(data)==SI$samples)
+  if(length(timestamp)==1){
+    attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+  } else {
+    attr(data, 'TS') <- timestamp
+  }
+  ret <- list(data)
   SI(ret) <- SI
   ret
 }

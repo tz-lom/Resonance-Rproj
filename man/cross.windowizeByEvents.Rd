@@ -5,7 +5,7 @@
 \title{Split data stream to windows using event stream}
 \usage{
 cross.windowizeByEvents(data, events, windowSize, shift = 0,
-  dropLateEvents = NULL, lateTime = 10)
+  dropLateEvents = TRUE, lateTime = 10)
 }
 \arguments{
 \item{data}{Data stream}
@@ -14,8 +14,7 @@ cross.windowizeByEvents(data, events, windowSize, shift = 0,
 
 \item{windowSize}{Size of resulting window}
 
-\item{dropLateEvents}{Don't expand buffer infinitely, lateTime controls buffer size and any events that arrive with timestamp earlier than last data timestamp-lateTime potentially can be dropped
-TRUE forces that parameter, FALSE disables, NULL - TRUE when online and FALSE when offline}
+\item{dropLateEvents}{Don't expand buffer infinitely, lateTime controls buffer size and any events that arrive with timestamp earlier than last data timestamp-lateTime potentially can be dropped}
 
 \item{lateTime}{- allowed delay for events (in seconds)}
 

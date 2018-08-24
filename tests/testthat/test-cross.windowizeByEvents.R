@@ -42,7 +42,7 @@ test_that("test1", {
   Wsi <- SI.window(1, 11, 100)
   reference <- list(
     out=DBcombine(
-      DB.window(Wsi, 3+44E4, 2:12)
+      DB.window(Wsi, 3+37E4, 2:12)
       )
   )
   # test
