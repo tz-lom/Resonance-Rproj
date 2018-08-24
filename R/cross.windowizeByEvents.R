@@ -5,10 +5,9 @@
 #' @param windowSize Size of resulting window
 #' @param backBuffer Size of buffer for data, may be increased in case of big delay in events arrival
 #' @param dropLateEvents Don't expand buffer infinitely, lateTime controls buffer size and any events that arrive with timestamp earlier than last data timestamp-lateTime potentially can be dropped
-#' TRUE forces that parameter, FALSE disables, NULL - TRUE when online and FALSE when offline
 #' @param lateTime - allowed delay for events (in seconds)
 #' @return window
-cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateEvents = NULL, lateTime=10){
+cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateEvents = TRUE, lateTime=10){
   processor(
     data, events,
     prepare = function(env){
@@ -22,9 +21,6 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
       env$grabSampleQueue <- list()
       env$windowSelector <- 1:windowSize-1
       env$samplingRate <- SI(data)$samplingRate
-      if(is.null(dropLateEvents)) {
-        dropLateEvents <- !is.null(SI(data)$online) && SI(data)$online
-      }
       if(dropLateEvents) {
         env$shiftBufferTo <- ceiling(lateTime*SI(data)$samplingRate)
         env$maxBufferSize <- env$shiftBufferTo*2
