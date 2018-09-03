@@ -1,5 +1,5 @@
 SI <- function(input){
-  attr(input, '.StreamInfo')
+  attr(input, '.StreamInfo', TRUE)
 }
 
 `SI<-` <- function(x, name=NULL, value){
