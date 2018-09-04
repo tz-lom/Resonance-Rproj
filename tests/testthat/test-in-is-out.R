@@ -20,9 +20,9 @@ test_that("channels", {
   test(si, blocks)
   
   blocks <- list(
-    DB.channels(si, 3, 1:25),
-    DB.channels(si, 3+10*5E4, 26:75),
-    DB.channels(si, 3+19*5E4, 76:120)
+    DB.channels(si, timeoption2ts(si, 105), 1:25),
+    DB.channels(si, timeoption2ts(si, 115), 26:75),
+    DB.channels(si, timeoption2ts(si, 124), 76:120)
   )
   test(si, blocks)
 })

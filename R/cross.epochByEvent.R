@@ -34,7 +34,7 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
         Resonance:::rowsCopy(signal, pointer, data, 0, -1)
         pointer <<- pointer+nrow(data)
         
-        si.times <<- append(si.times, attr(data, 'TS'))
+        si.times <<- append(si.times, TS(data))
       }
       
       if(length(events))
@@ -43,7 +43,7 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
           events, 
           function(e){
             r <- list(type = all(e))
-            r$time <- attr(e, 'TS')+(if(r$type) shiftT else shiftF)
+            r$time <- TS(e)+(if(r$type) shiftT else shiftF)
             r
           })
         
@@ -66,7 +66,7 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
         {
           range <- (begin+1):end
           ins <- signal[range,, drop=F]
-          attr(ins, 'TS') <- si.times[range]
+          TS(ins) <- si.times[range]
           res <- c(res, list(ins))
           
           evs <<- evs[-(1:2)]

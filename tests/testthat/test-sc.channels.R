@@ -1,6 +1,6 @@
 context("sc.channels")
 
-test_that("Slight time deviations are ignored", {
+test_that("Small time deviations are ignored", {
   
   si <- SI.channels(1, 120)
   streams <- list(si)

@@ -38,7 +38,7 @@ SI.outputStream <- function(name, id){
 }
 
 DB.event <- function(SI, timestamp, message){
-  attr(message, 'TS') <- timestamp
+  TS(message) <- nanotime(timestamp)
   ret <- list(message)
   SI(ret) <- SI
   ret
@@ -47,9 +47,9 @@ DB.event <- function(SI, timestamp, message){
 DB.channels <- function(SI, timestamp, vector){
   data <- if(is.matrix(vector)) vector else matrix(vector, ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
-    attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+    TS(data) <- nanotime(seq(to=as.integer64(timestamp), by=1E9/SI$samplingRate, length.out=nrow(data)))
   } else {
-    attr(data, 'TS') <- timestamp
+    TS(data) <- nanotime(timestamp)
   }
   SI(data) <- SI
   data
@@ -60,9 +60,9 @@ DB.window <- function(SI, timestamp, vector){
   # assert_that(ncol(data)==SI$channels)
   # assert_that(nrow(data)==SI$samples)
   if(length(timestamp)==1){
-    attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+    TS(data) <- nanotime(seq(to=as.integer64(timestamp), by=1E9/SI$samplingRate, length.out=nrow(data)))
   } else {
-    attr(data, 'TS') <- timestamp
+    TS(data) <- nanotime(timestamp)
   }
   ret <- list(data)
   SI(ret) <- SI
@@ -72,9 +72,9 @@ DB.window <- function(SI, timestamp, vector){
 DB.epoch <- function(SI, timestamp, vector){
   data <- if(is.matrix(vector)) vector else matrix(as.double(vector), ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
-    attr(data, 'TS') <- seq(to=timestamp, by=1E6/SI$samplingRate, length.out=nrow(data))
+    TS(data) <- nanotime(seq(to=as.integer64(timestamp), by=1E9/SI$samplingRate, length.out=nrow(data)))
   } else {
-    attr(data, 'TS') <- timestamp
+    TS(data) <- nanotime(timestamp)
   }
   ret <- list(data)
   SI(ret) <- SI
@@ -93,6 +93,7 @@ makeEmpty.window <- function(si){
 
 makeEmpty.channels <- function(si){
   ret <- matrix(0.0, nrow=0, ncol=si$channels)
+  TS(ret) <- nanotime(c())
   SI(ret) <- si
   ret
 }
@@ -127,8 +128,8 @@ DBcombine <- function(...){
 DBcombine.channels <- function(x, ...){
   ret <- rbind(x, ...)
   SI(ret) <- SI(x)
-  ts <- c(attr(x, 'TS'), do.call(c, lapply(list(...), attr, 'TS')))
-  attr(ret, 'TS') <- ts
+  ts <- c(TS(x), do.call(c, lapply(list(...), TS)))
+  TS(ret) <- ts
   ret
 }
 

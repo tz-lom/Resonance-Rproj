@@ -14,21 +14,17 @@ onDataBlock <- function(id, data) {
 }
 
 onDataBlock.message <- function(id, msg, timestamp){
-  attr(msg, 'TS') <- timestamp
+  data <- DB.event(.globals$inputs[[id]], timestamp, msg)
   onDataBlock(id, list(msg))
 }
 
-onDataBlock.channels <- function(id, vector, samples, timestamp){
-  data <- matrix(vector, nrow=samples, byrow = T)
-  attr(data, 'TS') <- seq(to=timestamp, by=1E6/.globals$inputs[[id]]$samplingRate, length.out=samples)
-  SI(data) <- .globals$inputs[[id]]
+onDataBlock.channels <- function(id, vector, timestamp){
+  data <- DB.channels(.globals$inputs[[id]], timestamp, vector)
   onDataBlock(id, data)
 }
 
-onDataBlock.epoch <- function(id, vector, samples, timestamp){
-  data <- matrix(vector, nrow=samples, byrow = T)
-  attr(data, 'TS') <- seq(to=timestamp, by=1E6/.globals$inputs[[id]]$samplingRate, length.out=samples)
-  SI(data) <- .globals$inputs[[id]]
+onDataBlock.epoch <- function(id, vector, timestamp){
+  data <- DB.epoch(.globals$inputs[[id]], timestamp, vector)
   onDataBlock(id, data)
 }
 

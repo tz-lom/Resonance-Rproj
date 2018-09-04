@@ -6,6 +6,8 @@ import(geigen)
 importFrom(digest, digest)
 importFrom(compiler, cmpfun)
 importFrom(zoo, rollapply)
+importFrom(nanotime, nanotime)
+importFrom(bit64, as.integer64)
 
 export("processor")
 export("to.channels")

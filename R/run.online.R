@@ -22,20 +22,20 @@ run.online <- function(inputs, blocks, code){
   }
   
   nextBlock.channels <- function(b){
-    ts <- attr(b, 'TS')
-    onDataBlock.channels(id = blockToId(b), vector = t(b), samples = nrow(b), timestamp = ts[[length(ts)]])
+    ts <- TS(b)
+    onDataBlock.channels(id = blockToId(b), b, timestamp = ts[[length(ts)]])
   }
   
   nextBlock.event <- function(b){
-    onDataBlock.message(id = blockToId(b), msg = b[[1]], timestamp = attr(b[[1]], 'TS'))
+    onDataBlock.message(id = blockToId(b), msg = b[[1]], timestamp = TS(b[[1]]))
   }
   
   nextBlock.window <- function(b){
-    onDataBlock.window(id = blockToId(b), vector = b, timestamp=attr(b, 'TS'))
+    onDataBlock.window(id = blockToId(b), vector = b, timestamp=TS(b))
   }
   
   nextBlock.epoch <- function(b){
-    onDataBlock.epoch(id=blockToId(b), vector=b, timestamp=attr(b, 'TS'))
+    onDataBlock.epoch(id=blockToId(b), vector=b, timestamp=TS(b))
   }
   
   nextBlock.default <- function(b){
@@ -68,7 +68,7 @@ run.online <- function(inputs, blocks, code){
         list(
           DB.something(
             si,
-            attr(x$args$data, 'TS'),
+            TS(x$args$data),
             data
             )
           )
