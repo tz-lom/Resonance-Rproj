@@ -35,12 +35,12 @@ test_that("test1", {
   blocks <- list(
     DB.channels(Csi, timeoption2ts(Csi, 201), 1),
     DB.channels(Csi, timeoption2ts(Csi, 225), 2:25),
-    DB.event(Esi, 2.12E9 , TRUE),
+    DB.event(Esi, 2.119E9 , TRUE),
     DB.event(Esi, 2.185E9 , FALSE)
   )
   # out
   EPsi <- SI.epoch(1, 100)
-  reference <- list(out=DB.epoch(EPsi, timeoption2ts(Csi, 202), 2:19))
+  reference <- list(out=DB.epoch(EPsi, timeoption2ts(Csi, 218), 12:18))
   # test
   doTest(streams, blocks, reference)
 })

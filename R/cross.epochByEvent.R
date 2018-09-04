@@ -54,13 +54,13 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
           sapply(newEvs, `[[`, 'type')
         )) != 0 ]
         
-        evs <<- c(evs, sapply(newEvs, `[[`, 'time'))
+        evs <<- c(evs, lapply(newEvs, `[[`, 'time'))
       }
       
       while( length(evs)>1 && length(si.times))
       {
-        begin <- findInterval(evs[[1]], si.times)
-        end <- findInterval(evs[[2]], si.times)
+        begin <- timeInterval(evs[[1]], si.times)
+        end <- timeInterval(evs[[2]], si.times)
 
         if((begin>0) && (end < length(si.times)))
         {
@@ -71,9 +71,32 @@ cross.epochByEvent <- function(data, events, shiftT=0, shiftF=0){
           
           evs <<- evs[-(1:2)]
         }
+        else
+        {
+          break;
+        }
       }
       
       res
     }
   )
+}
+
+timeInterval <- function(x, time){
+  if(time[[1]]>x) return(0)
+  if(time[[length(time)]]<x) return(Inf)
+  
+  low <- 1
+  high <- length(time)
+  
+  while(TRUE){
+    if(high-low <= 1) return(low)
+    
+    boundary <- ceiling((high+low)/2)
+    if(x > time[[boundary]]){
+      low <- boundary
+    } else {
+      high <- boundary
+    }
+  }
 }
