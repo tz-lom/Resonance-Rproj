@@ -5,9 +5,9 @@ test_that("Small time deviations are ignored", {
   si <- SI.channels(1, 120)
   streams <- list(si)
   blocks <- list(
-    DB.channels(si, 1E6/120*6+5, 1:6),
-    DB.channels(si, 1E6/120*12-4000, 1:6),
-    DB.channels(si, 1E6/120*18+4000, 1:6)
+    DB.channels(si, timeoption2ts(si, 206)+5, 1:6),
+    DB.channels(si, timeoption2ts(si, 212)-4000, 1:6),
+    DB.channels(si, timeoption2ts(si, 218)+4000, 1:6)
   )
   
   code <- "
@@ -15,7 +15,7 @@ process=function(){
   createOutput(sc.channels(input(1)), 'out')
 }"
   
-  reference <- list(out=DB.channels(si, 1E6/120*18+5, c(1:6,1:6,1:6)))
+  reference <- list(out=DB.channels(si, timeoption2ts(si, 218)+5, c(1:6,1:6,1:6)))
   
   online <- run.online(streams, blocks, code)
   offline <- run.offline(streams, blocks, code)
