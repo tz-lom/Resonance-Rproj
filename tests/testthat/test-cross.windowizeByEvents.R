@@ -18,7 +18,7 @@ test_that("empty data", {
   Esi <- SI.event()
   streams <- list(Csi, Esi)
   blocks <- list(
-    DB.channels(Csi, 3+10*5E4, 26:75)
+    DB.channels(Csi, timeoption2ts(Csi, 211), 26:75)
   )
   # out
   Wsi <- SI.window(2, 11, 100)
@@ -33,16 +33,16 @@ test_that("test1", {
   Esi <- SI.event()
   streams <- list(Csi, Esi)
   blocks <- list(
-    DB.channels(Csi, 3, 1),
-    DB.channels(Csi, 3+10*5E4, 2:25),
-    DB.event(Esi, 30 , TRUE),
-    DB.event(Esi, 45E4 , FALSE)
+    DB.channels(Csi, timeoption2ts(Csi, 201), 1),
+    DB.channels(Csi, timeoption2ts(Csi, 225), 2:25),
+    DB.event(Esi, timeoption2ts(Csi, 202) , TRUE),
+    DB.event(Esi, timeoption2ts(Csi, 301) , FALSE)
   )
   # out
   Wsi <- SI.window(1, 11, 100)
   reference <- list(
     out=DBcombine(
-      DB.window(Wsi, 3+37E4, 2:12)
+      DB.window(Wsi, timeoption2ts(Csi, 212), 2:12)
       )
   )
   # test

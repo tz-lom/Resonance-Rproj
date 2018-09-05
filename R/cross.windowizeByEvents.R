@@ -15,7 +15,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
       
       env$signal <- matrix(0.0, ncol=SI(data)$channels, nrow=2^5)
       env$pointer <- 0L
-      env$si.times <- vector(mode = "double", length=nrow(env$signal))
+      env$si.times <- nanotime(rep(NA,nrow(env$signal)))
       env$lastTS <- NA
       env$lastSample <- 0
       env$grabSampleQueue <- list()
@@ -65,14 +65,13 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
       ret <- list()
       
       while(length(grabSampleQueue)>0){
-        gs <- attr(grabSampleQueue[[1]], 'TS')
+        gs <- TS(grabSampleQueue[[1]])
         
-        # @todo: when which.max will be fixed use it 
-        moar <- which(si.times >= gs)  
+        moar <- timeInterval(gs, si.times)
         
-        if(length(moar)>0){
+        if(moar>0 && moar<length(si.times)){
           
-          pos <- moar[1] + shift
+          pos <- moar[1] + 1 + shift
           
           if(pos < 1) {
             # early event, drop it
@@ -83,7 +82,7 @@ cross.windowizeByEvents <- function(data, events, windowSize, shift=0, dropLateE
           if(pointer >= pos+windowSize){
             # get window and move on
             wnd <- signal[pos + windowSelector, , drop=F]
-            attr(wnd, 'TS') <- si.times[pos + windowSelector]
+            TS(wnd) <- si.times[pos + windowSelector]
             # attr(wnd, 'byEvent') <- grabSampleQueue[[1]]
             
             grabSampleQueue <<- grabSampleQueue[-1]

@@ -40,3 +40,23 @@ seconds <- function(x){
   class(x) <- c(class(x), 'seconds')
   x
 }
+
+timeInterval <- function(x, time){
+  time <- na.omit(time)
+  if(time[[1]]>x) return(0)
+  if(time[[length(time)]]<x) return(Inf)
+  
+  low <- 1
+  high <- length(time)
+  
+  while(TRUE){
+    if(high-low <= 1) return(low)
+    
+    boundary <- ceiling((high+low)/2)
+    if(x > time[[boundary]]){
+      low <- boundary
+    } else {
+      high <- boundary
+    }
+  }
+}
