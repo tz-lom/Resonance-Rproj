@@ -3,7 +3,7 @@ TS <- function(x){
 }
 
 `TS<-` <- function(x, value){
-  attr(x, 'TS') <- value
+  attr(x, 'TS') <- nanotime(value)
   x
 }
 

@@ -43,10 +43,10 @@ pipe.FFTFilter <- function(input, choose, normalize=F) {
         }
       }
       #extract times from ret
-      attr(ret, 'TS') <- sapply(data, function(d){
-        ts <- attr(d, 'TS')
+      TS(ret) <- do.call(c, lapply(data, function(d){
+        ts <- TS(d)
         ts[[length(ts)]]
-      })
+      }))
       ret
     }
   )

@@ -17,33 +17,9 @@ run.online <- function(inputs, blocks, code){
   }
   
   
-  nextBlock <- function(x){
-    do.call(paste("nextBlock", SI(x)$type, sep="."), list(x))
-  }
-  
-  nextBlock.channels <- function(b){
-    ts <- TS(b)
-    onDataBlock.channels(id = blockToId(b), b, timestamp = ts[[length(ts)]])
-  }
-  
-  nextBlock.event <- function(b){
-    onDataBlock.message(id = blockToId(b), msg = b[[1]], timestamp = TS(b[[1]]))
-  }
-  
-  nextBlock.window <- function(b){
-    onDataBlock.window(id = blockToId(b), vector = b, timestamp=TS(b))
-  }
-  
-  nextBlock.epoch <- function(b){
-    onDataBlock.epoch(id=blockToId(b), vector=b, timestamp=TS(b))
-  }
-  
-  nextBlock.default <- function(b){
-    stop('Unknown block type')
-  }
-  
-  
-  lapply(blocks, nextBlock)
+  lapply(blocks, function(x){
+    onDataBlock(blockToId(x), x)
+  })
   
   Q <- popQueue()
   

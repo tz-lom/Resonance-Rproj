@@ -1,11 +1,11 @@
 Package: Resonance
 Type: Package
 Title: Interface for Resonance project
-Version: 0.3.4
+Version: 1.0.0
 Date: 2017-11-16
-Author: Nuzhdin Yury
-Maintainer: Nuzhdin Yury <nuzhdin.urii@gmail.com>
-Description: Supplimentary package for use with Resonance project as R interface
+Author: Yury Nuzhdin
+Maintainer: Yury Nuzhdin <nuzhdin.urii@gmail.com>
+Description: Main R package for Resonance project
 License: GPL-2
 Suggests:
     testthat, knitr
