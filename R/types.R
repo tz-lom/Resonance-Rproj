@@ -1,32 +1,32 @@
-SI.channels <- function(channels, samplingRate){
-  list(
+SI.channels <- function(channels, samplingRate, id=-1){
+  c(list(
     type='channels',
     channels=channels,
     samplingRate=samplingRate
-  )
+  ), if(id==-1) list() else list(id=id))
 }
 
-SI.window <- function(channels, samples, samplingRate){
-  list(
+SI.window <- function(channels, samples, samplingRate, id=-1){
+  c(list(
     type='window',
     channels = channels,
     samples = samples,
     samplingRate = samplingRate
-  )
+  ), if(id==-1) list() else list(id=id))
 }
 
-SI.event <- function(){
-  list(
+SI.event <- function(id=-1){
+  c(list(
     type='event'
-  )
+  ), if(id==-1) list() else list(id=id))
 }
 
-SI.epoch <- function(channels, samplingRate){
-  list(
+SI.epoch <- function(channels, samplingRate, id=-1){
+  c(list(
     type='epoch',
     channels = channels,
     samplingRate = samplingRate
-  )
+  ), if(id==-1) list() else list(id=id))
 }
 
 SI.outputStream <- function(name, id){

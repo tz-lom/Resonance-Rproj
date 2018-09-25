@@ -1,25 +1,19 @@
 onPrepare <- function(inputs, code){
-
-    Resonance:::.reset_processor_cache()
-
-  resetGlobals();
-
+  
+  .reset_execution_plan()
+  
+  .execution_plan$inputsData <- lapply(inputs, makeEmpty)
+  
+  .execution_plan$nextStreamId <- length(inputs)+1
+  
   if(is.language(code)){
-    eval(code, envir = .globals$env)
+    eval(code, envir = .execution_plan$env)
   }else{
-    eval(parse(text=code), envir = .globals$env)
+    eval(parse(text=code), envir = .execution_plan$env)
   }
 
-  .globals$inputsData <- lapply(inputs, makeEmpty)
-  .globals$inputs <- inputs
-
-  .globals$env$input <- function(id){
-    .globals$inputsData[[id]]
-  }
-
-
-  if(is.function(.globals$env$process)) {
-    .globals$env$process()
+  if(is.function(.execution_plan$env$process)) {
+    .execution_plan$env$process()
   } else {
     stop('Nothing to process')
   }

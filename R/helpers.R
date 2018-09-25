@@ -11,11 +11,10 @@ SI <- function(input){
   x
 }
 
-.processor_cache <- new.env()
-.processor_si_cache <- new.env()
-.reset_processor_cache <- function(){
-  rm(list = ls(.processor_cache),envir = .processor_cache)
-  rm(list = ls(.processor_si_cache),envir = .processor_si_cache)
+multipleStreams <- function(...){
+  l <- list(...)
+  class(l) <- 'multipleStreams'
+  l
 }
 
 #' Wraps all necessary handlers to pipeline function
@@ -29,85 +28,77 @@ processor <- function(
   ){
 
   inputs <- list(...)
-  #check if it is online stream and already initialized
-  # need to carefully hash callstack
-  # it is hack here
+  
+  env <- new.env(parent=environment(online))
+  si <- prepare(env)
+  
+  if(is.character(si)) stop(si)
 
-  #sc <- as.list(sys.frame(-1))
-  #sc[ sc %in% inputs ] <- NULL
-  #sc <- as.list(sys.frame(-1))
-
-  #@todo: replace digest to something faster
-  A <- sys.call(-1)
-  hash <- call_hash(A)
-
-
-  if(is.null(.processor_cache[[hash]]))
-  {
-    env <- new.env(parent=environment(online))
-
-    si <- prepare(env)
-    if(is.character(si)) stop(si)
-
-    if(!is.null(SI(inputs[[1]])$online)){
-      # prepare online processing
-      environment(online) <- env
-      .processor_cache[[hash]] <- online;
-      .processor_si_cache[[hash]] <- si;
-      
-      if( class(si)=='multipleStreams' ){
-        result <- lapply(si, function(si){
-          ret <- list()
-          SI(ret) <- si
-          SI(ret, 'online') <- TRUE
-          ret
-        })
-      } else {
-        result <- makeEmpty(si)
-        SI(result, 'online') <- TRUE
-      }
-      
-      return(result)
+  if(SI(inputs[[1]])$online){
+    # prepare online processing
+    environment(online) <- env
+    
+    
+    
+    if( class(si)=='multipleStreams' ){
+      si <- lapply(si, function(si){
+        si$id <- .execution_plan$nextStreamId
+        .execution_plan$nextStreamId <<- .execution_plan$nextStreamId+1
+        si$online <- TRUE
+        si
+      })
+      result <- lapply(si, makeEmpty)
     } else {
-      result <- if(is.null(offline)){
-        environment(online) <- env
-        online(...)
-      } else {
-        environment(offline) <- env
-        offline(...)
-      }
-      
-      if(class(result)=='multipleStreams'){
-        result <- mapply(function(stream, si){
-          SI(stream) <- si
-          stream
-        }, result, si)
-      } else {
-        SI(result) <- si
-      }
-      return(result);
+      si$id <- .execution_plan$nextStreamId
+      .execution_plan$nextStreamId <- .execution_plan$nextStreamId+1
+      si$online <- TRUE
+      result <- makeEmpty(si)
+      si <- list(si)
     }
-  }
-  else
-  {
-    # perform online processing
-    result <- do.call(.processor_cache[[hash]], inputs)
+    
+    .execution_plan$plan <- c(
+      .execution_plan$plan,
+      list(list(
+        online=online,
+        outputs=si,
+        inputs=lapply(inputs, SI),
+        call=sys.call(-1)
+      )))
+    
+    return(result)
+  } else {
+    result <- if(is.null(offline)){
+      environment(online) <- env
+      online(...)
+    } else {
+      environment(offline) <- env
+      offline(...)
+    }
     
     if(class(result)=='multipleStreams'){
       result <- mapply(function(stream, si){
         SI(stream) <- si
         stream
-      }, result, .processor_si_cache[[hash]])
+      }, result, si)
     } else {
-      SI(result) <- .processor_si_cache[[hash]]
+      SI(result) <- si
     }
-    
-    return(result)
+    return(result);
   }
-}
-
-multipleStreams <- function(...){
-  l <- list(...)
-  class(l) <- 'multipleStreams'
-  l
+  # else
+  # {
+  #   # perform online processing
+  #   result <- do.call(.processor_cache[[hash]], inputs)
+  #   
+  #   if(class(result)=='multipleStreams'){
+  #     result <- mapply(function(stream, si){
+  #       SI(stream) <- si
+  #       stream
+  #     }, result, .processor_si_cache[[hash]])
+  #   } else {
+  #     SI(result) <- .processor_si_cache[[hash]]
+  #   }
+  #   
+  #   return(result)
+  # }
 }

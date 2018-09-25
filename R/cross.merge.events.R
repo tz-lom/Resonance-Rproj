@@ -6,9 +6,14 @@ cross.merge.events <- function(...){
         SI.is.event(x)
       })) || stop("Every stream must be event")
       
-      SI(list(...)[[1]])
+      env$other
+      
+      SI.event()
     },
     online = function(...){
+      
+    },
+    offline = function(...){
       # merge all of them into one list
       all <- c(...)
       TS <- sapply(all, attr, 'TS')

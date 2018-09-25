@@ -4,8 +4,8 @@ createOutput <- function(data, name){
     data,
     prepare = function(env){
 
-      id <- .globals$outputId
-      .globals$outputId <- .globals$outputId+1
+      id <- .execution_plan$nextOutputId
+      .execution_plan$nextOutputId <- .execution_plan$nextOutputId+1
 
       args <- SI(data)
       args$id <- id
