@@ -26,7 +26,7 @@ test_that("simple", {
     DB.event(si, 60, FALSE)
   ))
   
-  expect_equal(online, offline)
-  expect_equal(online, reference)
+  expect_identical(online, offline)
+  expect_identical(online, reference)
 })
 

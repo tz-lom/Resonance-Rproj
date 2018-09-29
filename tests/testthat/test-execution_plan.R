@@ -68,6 +68,6 @@ process = function(){
 }
   "
   
-  online <- run.online(list(Esi), blocks, code)
+  #online <- run.online(list(Esi), blocks, code)
   
 })

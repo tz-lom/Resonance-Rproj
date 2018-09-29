@@ -13,7 +13,7 @@ run.online <- function(inputs, blocks, code){
   }, inputs, seq_len(length(inputs)), SIMPLIFY = FALSE)
   
   blocks <- lapply(blocks, function(x){
-    SI(x) <- inputs[[match(SI(x), old_inputs)]]
+    SI(x) <- inputs[sapply(old_inputs, identical, SI(x))][[1]]
     x
   })
   
@@ -55,12 +55,12 @@ run.online <- function(inputs, blocks, code){
     })
   }
   
+  processQueue()
+  
   lapply(blocks, function(x){
     onDataBlock(blockToId(x), x)
     processQueue()
   })
-  
-  Q <- popQueue()
   
   if(length(datas)>0){
     lapply(datas, function(bl) {

@@ -15,6 +15,31 @@
   }
 }
 
+processBlock = function(block){
+  execId <- findInExectionPlan(SI(block))
+  if(length(execId)>0){
+    target <- .execution_plan$plan[[execId]]
+    
+    argList <- lapply(target$inputs, function(si){
+      if(identical(si, SI(block)))
+        block
+      else
+        makeEmpty(si)
+    })
+    
+    result <- do.call(target$online, argList)
+       
+    if(class(result)=='multipleStreams'){
+      mapply(function(data, si){
+        SI(data) <- si
+        processBlock(data)
+      }, result, target$outputs)
+    } else {
+      SI(result) <- target$outputs[[1]]
+      processBlock(result)
+    }
+  }
+}
 
 addToQueue = function(cmd, ...){
   .execution_plan$queue <- append(
@@ -40,7 +65,15 @@ findInExectionPlan <- function(si){
   }))
 }
 
-renderExecutionPlanAsGraph <- function(){
+renderExecutionPlanAsGraph <- function(render=TRUE){
+  if(length(find.package('DiagrammeR', quiet = TRUE)) == 0L){
+    stop("Please install package 'DiagrammeR'")
+  }
+  
+  if(length(.execution_plan$plan)==0){
+    warning('No execution plan exists')
+    return(NULL)
+  }
   
   Ninputs <- length(.execution_plan$inputsData)
   
@@ -48,9 +81,11 @@ renderExecutionPlanAsGraph <- function(){
     n = Ninputs + length(.execution_plan$plan),
     label = c(
       sapply(.execution_plan$inputsData, function(x){ paste("Input", SI(x)$id) }),
-      sapply(.execution_plan$plan, function(x){ gsub('"', '\\\\"', format(x$call)) })
+      sapply(.execution_plan$plan, function(x){ as.character(x$call[[1]]) })
     )
   )
+  
+  # gsub('"', '\\\\"', paste0(format(x$call), collapse='\n'))
   
   from <- c()
   to <- c()
@@ -77,8 +112,31 @@ renderExecutionPlanAsGraph <- function(){
     rel = "related"
   )
   
-  DiagrammeR::create_graph(
+  theme <-
+    data.frame(attr = c("layout", "outputorder", "fontname", 
+          "fontsize", "shape", "fixedsize", "style", "fillcolor", "color", 
+          "fontcolor", "bgcolor", "fontname", "fontsize", "len", "color", 
+          "arrowsize"), 
+        value = c("neato", "edgesfirst", "Helvetica", "10", 
+          "box", "false", "filled", "aliceblue", "gray70", "gray50", "white", 
+          "Helvetica", "8", "1.5", "gray80", "0.5"), 
+        attr_type = c("graph", 
+          "graph", "node", "node", "node", "node", "node", "node", "node", 
+          "node", "graph", "edge", "edge", "edge", "edge", "edge"),
+        stringsAsFactors = FALSE)
+  
+  graph <- DiagrammeR::create_graph(
     nodes_df = nodes,
-    edges_df = edges,attr_theme = NULL
-    )
+    edges_df = edges
+  )
+  graph$global_attrs <- theme
+  
+  if(render==FALSE){
+    return(graph)
+  }
+  
+  DiagrammeR::render_graph(
+    graph,
+    layout="tree"
+  )
 }

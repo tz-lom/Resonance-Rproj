@@ -30,6 +30,6 @@ test_that("basic", {
     )
   )
   
-  expect_equal(online, offline)
-  expect_equal(reference, online);
+  expect_identical(online, offline)
+  expect_identical(reference, online);
 })

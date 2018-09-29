@@ -34,7 +34,7 @@ processor <- function(
   
   if(is.character(si)) stop(si)
 
-  if(SI(inputs[[1]])$online){
+  if(isTRUE(SI(inputs[[1]])$online)){
     # prepare online processing
     environment(online) <- env
     

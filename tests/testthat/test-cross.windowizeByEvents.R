@@ -8,8 +8,8 @@ doTest <- function(streams, blocks, reference){
   "
   online <- run.online(streams, blocks, code)
   offline <- run.offline(streams, blocks, code)
-  expect_equal(online, offline)
-  expect_equal(online, reference)
+  expect_identical(online, offline)
+  expect_identical(online, reference)
 }
 
 test_that("empty data", {

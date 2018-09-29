@@ -12,7 +12,7 @@ test_that("channels", {
   M <- DBcombine(A,B,C)
   O <- DB.channels(si, timeoption2ts(si, 224), 1:120)
 
-  expect_equal(O, M)
+  expect_identical(O, M)
 })
 
 test_that("event", {
@@ -33,7 +33,7 @@ test_that("event", {
   attr(target[[3]], 'TS') <- nanotime(12)
   SI(target) <- si
 
-  expect_equal(result, target)
+  expect_identical(result, target)
 })
 
 test_that("event empty", {
@@ -46,7 +46,7 @@ test_that("event empty", {
   
   result <- do.call(DBcombine, blocks)
   
-  expect_equal(result, makeEmpty(si))
+  expect_identical(result, makeEmpty(si))
 })
 
 test_that("event empty 1", {
@@ -58,7 +58,7 @@ test_that("event empty 1", {
   
   result <- do.call(DBcombine, blocks)
   
-  expect_equal(result, makeEmpty(si))
+  expect_identical(result, makeEmpty(si))
 })
 
 test_that("epoch", {
@@ -78,12 +78,12 @@ test_that("epoch", {
     matrix(as.double(31:42), ncol=2, byrow=T),
     matrix(as.double(61:90), ncol=2, byrow=T)
   )
-  TS(target[[1]]) <- nanotime(seq(to=1E9, by=1E9/30, length.out=15))
-  TS(target[[2]]) <- nanotime(seq(to=4E9, by=1E9/30, length.out=6))
-  TS(target[[3]]) <- nanotime(seq(to=12E9, by=1E9/30, length.out=15))
+  TS(target[[1]]) <- nanotime(seq(to=as.integer64(1E9), by=1E9/30, length.out=15))
+  TS(target[[2]]) <- nanotime(seq(to=as.integer64(4E9), by=1E9/30, length.out=6))
+  TS(target[[3]]) <- nanotime(seq(to=as.integer64(12E9), by=1E9/30, length.out=15))
   SI(target) <- si
 
-  expect_equal(result, target)
+  expect_identical(result, target)
 })
 
 test_that("epoch empty", {
@@ -96,7 +96,7 @@ test_that("epoch empty", {
   
   result <- do.call(DBcombine, blocks)
   
-  expect_equal(result, makeEmpty(si))
+  expect_identical(result, makeEmpty(si))
 })
 
 test_that("epoch empty 1", {
@@ -108,5 +108,5 @@ test_that("epoch empty 1", {
   
   result <- do.call(DBcombine, blocks)
   
-  expect_equal(result, makeEmpty(si))
+  expect_identical(result, makeEmpty(si))
 })

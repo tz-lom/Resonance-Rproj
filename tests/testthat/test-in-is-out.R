@@ -10,8 +10,8 @@ test <- function(si, blocks){
   } else {
     list(out=makeEmpty(si))
   }
-  expect_equal(online, origin)
-  expect_equal(online, offline)
+  expect_identical(online, origin)
+  expect_identical(online, offline)
 }
 
 test_that("channels", {

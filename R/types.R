@@ -1,17 +1,17 @@
 SI.channels <- function(channels, samplingRate, id=-1){
   c(list(
     type='channels',
-    channels=channels,
-    samplingRate=samplingRate
+    channels=as.integer(channels),
+    samplingRate=as.numeric(samplingRate)
   ), if(id==-1) list() else list(id=id))
 }
 
 SI.window <- function(channels, samples, samplingRate, id=-1){
   c(list(
     type='window',
-    channels = channels,
-    samples = samples,
-    samplingRate = samplingRate
+    channels = as.integer(channels),
+    samples = as.integer(samples),
+    samplingRate = as.numeric(samplingRate)
   ), if(id==-1) list() else list(id=id))
 }
 
@@ -24,8 +24,8 @@ SI.event <- function(id=-1){
 SI.epoch <- function(channels, samplingRate, id=-1){
   c(list(
     type='epoch',
-    channels = channels,
-    samplingRate = samplingRate
+    channels = as.integer(channels),
+    samplingRate = as.numeric(samplingRate)
   ), if(id==-1) list() else list(id=id))
 }
 
@@ -45,7 +45,7 @@ DB.event <- function(SI, timestamp, message){
 }
 
 DB.channels <- function(SI, timestamp, vector){
-  data <- if(is.matrix(vector)) vector else matrix(vector, ncol=SI$channels, byrow = T)
+  data <- if(is.matrix(vector)) vector else matrix(as.numeric(vector), ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     TS(data) <- nanotime(seq(to=as.integer64(timestamp), by=1E9/SI$samplingRate, length.out=nrow(data)))
   } else {
@@ -56,7 +56,7 @@ DB.channels <- function(SI, timestamp, vector){
 }
 
 DB.window <- function(SI, timestamp, vector){
-  data <- if(is.matrix(vector)) vector else matrix(vector, nrow=SI$samples, byrow = T)
+  data <- if(is.matrix(vector)) vector else matrix(as.numeric(vector), nrow=SI$samples, byrow = T)
   # assert_that(ncol(data)==SI$channels)
   # assert_that(nrow(data)==SI$samples)
   if(length(timestamp)==1){
@@ -70,7 +70,7 @@ DB.window <- function(SI, timestamp, vector){
 }
 
 DB.epoch <- function(SI, timestamp, vector){
-  data <- if(is.matrix(vector)) vector else matrix(as.double(vector), ncol=SI$channels, byrow = T)
+  data <- if(is.matrix(vector)) vector else matrix(as.numeric(vector), ncol=SI$channels, byrow = T)
   if(length(timestamp)==1){
     TS(data) <- nanotime(seq(to=as.integer64(timestamp), by=1E9/SI$samplingRate, length.out=nrow(data)))
   } else {
