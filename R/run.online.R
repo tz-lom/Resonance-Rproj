@@ -17,15 +17,11 @@ run.online <- function(inputs, blocks, code){
     x
   })
   
-  onPrepare(inputs, code)
-  
-  blockToId <- function(b){
-    which(sapply(inputs, identical, SI(b)))
-  }
-  
   sis <- list()
   datas <- list()
   siNames <- list()
+  timers <- data.frame(id=integer(), time=bit64::integer64(), timeout=numeric(), singleShot=logical())
+  currentTime <- nanotime(0)
   
   processQueue <- function(){
     Q <- popQueue()
@@ -52,15 +48,67 @@ run.online <- function(inputs, blocks, code){
           )
         )
       }
+      if(x$cmd == 'startTimer'){
+        timers <<- rbind(
+          timers,
+          data.frame(
+            id = x$args$id,
+            time = currentTime + x$args$timeout*1E6,
+            timeout = x$args$timeout*1E6,
+            singleShot = x$args$singleShot
+          ))
+      }
     })
   }
   
+  # actual execution
+  
+  onPrepare(inputs, code)
+  processQueue()
+  
+  onStart()
   processQueue()
   
   lapply(blocks, function(x){
-    onDataBlock(blockToId(x), x)
+    currentTime <<- lastTS(x)
+    # maybe some timers will trigger before this data block
+    if(nrow(timers)>0){
+      toProcess <- which(timers$time<currentTime)
+      toProcess <- toProcess[order(timers$time[toProcess])]
+      for(i in toProcess){
+        timer <- timers[i, ]
+        currentTime <<- timer$time
+        onTimer(timer$id, timer$time)
+        processQueue()
+        if(!timer$singleShot){
+          timers[i, 'time'] <- currentTime + timer$timeout
+        }
+      }
+      currentTime <<- lastTS(x)
+      toRemove <- which(timers$time<currentTime)
+      if(length(toRemove)>0){
+        timers <<- timers[-toRemove, ]
+      }
+    }
+    
+    onDataBlock(x)
     processQueue()
   })
+  
+  # process timers
+  toProcess <- order(timers$time)
+  for(i in toProcess){
+    timer <- timers[i, ]
+    currentTime <<- timer$time
+    onTimer(timer$id, timer$time)
+    processQueue()
+  }
+
+  onStop()
+  processQueue()
+  
+  # finished
+  
   
   if(length(datas)>0){
     lapply(datas, function(bl) {

@@ -7,6 +7,9 @@
   .execution_plan$plan <- list()
   .execution_plan$nextOutputId <- 1
   .execution_plan$nextStreamId <- 1
+  .execution_plan$processingPlanId <- 0
+  .execution_plan$nextTimerId <- 1
+  .execution_plan$timers <- data.frame(id=c(), planId=c(), argName=c(), data=c(), singleShot=c())
 
   .execution_plan$inputsData <- list()
   .execution_plan$env <- new.env(parent=globalenv())
@@ -15,30 +18,8 @@
   }
 }
 
-processBlock = function(block){
-  execId <- findInExectionPlan(SI(block))
-  if(length(execId)>0){
-    target <- .execution_plan$plan[[execId]]
-    
-    argList <- lapply(target$inputs, function(si){
-      if(identical(si, SI(block)))
-        block
-      else
-        makeEmpty(si)
-    })
-    
-    result <- do.call(target$online, argList)
-       
-    if(class(result)=='multipleStreams'){
-      mapply(function(data, si){
-        SI(data) <- si
-        processBlock(data)
-      }, result, target$outputs)
-    } else {
-      SI(result) <- target$outputs[[1]]
-      processBlock(result)
-    }
-  }
+input <- function(){
+  stop("Can't use input function without run context")
 }
 
 addToQueue = function(cmd, ...){

@@ -7,6 +7,15 @@ TS <- function(x){
   x
 }
 
+lastTS <- function(x){
+  ts <- TS(x)
+  if(is.null(ts)){
+    TS(x[[length(x)]])
+  } else {
+    ts[[length(ts)]]
+  }
+}
+
 timeoption2samples <- function(si, x){
   if('seconds' %in% class(x)){
     as.numeric(x)*si$samplingRate
