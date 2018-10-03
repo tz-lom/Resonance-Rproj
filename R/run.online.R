@@ -1,4 +1,4 @@
-run.online <- function(inputs, blocks, code){
+run.online <- function(inputs, blocks, code, returnBlocks=FALSE){
   
   old_inputs <- inputs
   
@@ -109,16 +109,19 @@ run.online <- function(inputs, blocks, code){
   
   # finished
   
-  
-  if(length(datas)>0){
-    lapply(datas, function(bl) {
-      if(length(bl)>0){
-        merged <- do.call(DBcombine, bl)
-      } else {
-        list()
-      }
-    })
+  if(returnBlocks){
+    datas
   } else {
-    list()
+    if(length(datas)>0){
+      lapply(datas, function(bl) {
+        if(length(bl)>0){
+          merged <- do.call(DBcombine, bl)
+        } else {
+          list()
+        }
+      })
+    } else {
+      list()
+    }
   }
 }

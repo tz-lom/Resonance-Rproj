@@ -1,39 +1,46 @@
-SI.channels <- function(channels, samplingRate, id=-1){
-  c(list(
+SI.default <- function(id, name){
+  ret <- list()
+  if(!is.null(id)) ret$id <- id
+  if(!is.null(name)) ret$name <- name
+  ret
+}
+
+SI.channels <- function(channels, samplingRate, id=NULL, name=NULL){
+  c(SI.default(id, name),list(
     type='channels',
     channels=as.integer(channels),
     samplingRate=as.numeric(samplingRate)
-  ), if(id==-1) list() else list(id=id))
+  ))
 }
 
-SI.window <- function(channels, samples, samplingRate, id=-1){
-  c(list(
+SI.window <- function(channels, samples, samplingRate, id=NULL, name=NULL){
+  c(SI.default(id, name),list(
     type='window',
     channels = as.integer(channels),
     samples = as.integer(samples),
     samplingRate = as.numeric(samplingRate)
-  ), if(id==-1) list() else list(id=id))
+  ))
 }
 
-SI.event <- function(id=-1){
-  c(list(
+SI.event <- function(id=NULL, name=NULL){
+  c(SI.default(id, name),list(
     type='event'
-  ), if(id==-1) list() else list(id=id))
+  ))
 }
 
-SI.epoch <- function(channels, samplingRate, id=-1){
-  c(list(
+SI.epoch <- function(channels, samplingRate, id=NULL, name=NULL){
+  c(SI.default(id, name),list(
     type='epoch',
     channels = as.integer(channels),
     samplingRate = as.numeric(samplingRate)
-  ), if(id==-1) list() else list(id=id))
+  ))
 }
 
-SI.outputStream <- function(name, id){
+SI.outputStream <- function(name,  id){
   list(
     type='outputStream',
-    name=name,
-    id=id
+    id = id,
+    name = name
   )
 }
 
