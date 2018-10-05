@@ -36,7 +36,11 @@ cross.merge.events <- function(..., maxTimeDeviation=0.1){
         times <- do.call(c, lapply(eventBuffer[[i]], TS))
         if(length(times)>0){
           pass <- (times + timeDeviation) <= now 
-          ret <- c(ret, eventBuffer[[i]][pass]) 
+          addRet <- lapply(eventBuffer[[i]][pass], function(x){
+            TS(x) <- now
+            x
+          })
+          ret <- c(ret, addRet) 
           eventBuffer[[i]] <<- eventBuffer[[i]][!pass]
         }
       }
