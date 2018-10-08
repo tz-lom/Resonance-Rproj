@@ -1,6 +1,6 @@
-onPrepare <- function(inputs, code){
+onPrepare <- function(inputs, code, env=new.env()){
   
-  .reset_execution_plan()
+  .reset_execution_plan(env)
   
   .execution_plan$inputsData <- lapply(inputs, makeEmpty)
   

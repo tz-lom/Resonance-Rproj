@@ -1,6 +1,6 @@
 .execution_plan <- new.env()
 
-.reset_execution_plan <- function(){
+.reset_execution_plan <- function(env){
   rm(list = ls(.execution_plan), envir = .execution_plan)
   
   .execution_plan$queue <- list()
@@ -12,7 +12,7 @@
   .execution_plan$timers <- data.frame(id=c(), planId=c(), argName=c(), data=c(), singleShot=c())
 
   .execution_plan$inputsData <- list()
-  .execution_plan$env <- new.env(parent=globalenv())
+  .execution_plan$env <- env
   .execution_plan$env$input <- function(id){
     .execution_plan$inputsData[[id]]
   }

@@ -1,4 +1,4 @@
-run.online <- function(inputs, blocks, code, returnBlocks=FALSE){
+run.online <- function(inputs, blocks, code, returnBlocks=FALSE, env=new.env()){
   
   old_inputs <- inputs
   
@@ -63,7 +63,7 @@ run.online <- function(inputs, blocks, code, returnBlocks=FALSE){
   
   # actual execution
   
-  onPrepare(inputs, code)
+  onPrepare(inputs, code, env)
   processQueue()
   
   onStart()

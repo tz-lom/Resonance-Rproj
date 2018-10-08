@@ -11,7 +11,7 @@ cross.merge.events <- function(..., maxTimeDeviation=0.1){
       
       SI.event()
     },
-    online = function(..., .onTimeout=NULL){
+    online = function(..., onTimeout=NULL){
       requestTimeout <- FALSE
       mapply(function(evt, id){
         if(length(evt)>0){
@@ -23,7 +23,7 @@ cross.merge.events <- function(..., maxTimeDeviation=0.1){
       ret <- list()
       
       times <- lapply(eventBuffer, function(x){ do.call(c, lapply(x, TS)) } )
-      times <- c(list(TS(.onTimeout)), times)
+      times <- c(list(TS(onTimeout)), times)
       times <- times[!sapply(times, is.null)]
       
       if(length(times)==0) return(list())

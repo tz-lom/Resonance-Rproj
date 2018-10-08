@@ -32,7 +32,7 @@ onTimer <- function(id, time){
 }
 
 
-startTimer <- function(timeout, data=TRUE, call='.onTimeout', singleShot=TRUE){
+startTimer <- function(timeout, data=TRUE, call='onTimeout', singleShot=TRUE){
   if(.execution_plan$processingPlanId != 0 ){
     timerId <- .execution_plan$nextTimerId
     .execution_plan$nextTimerId <- .execution_plan$nextTimerId + 1
