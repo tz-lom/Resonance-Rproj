@@ -116,3 +116,29 @@ test_that("Timers reorder correctly separated by block", {
   )
 })
 
+test_that("Timers can be repeative", {
+  do_test(
+    list(
+      DB.event(si1, timeoption2ts(si1, seconds(1.01)), list(data='a', singleShot=F)),
+      DB.event(si2, timeoption2ts(si2, seconds(1.31)), 'A'),
+      DB.event(si2, timeoption2ts(si2, seconds(1.61)), 'B'),
+      DB.event(si2, timeoption2ts(si2, seconds(2.12)), 'C'),
+      DB.event(si2, timeoption2ts(si2, seconds(2.25)), 'D'),
+      DB.event(si2, timeoption2ts(si2, seconds(4.31)), 'E')
+    ),
+    DBcombine(
+      DB.event(siO, timeoption2ts(siO, seconds(1.31)), 'A'),
+      DB.event(siO, timeoption2ts(siO, seconds(1.51)), 'a'),
+      DB.event(siO, timeoption2ts(siO, seconds(1.61)), 'B'),
+      DB.event(siO, timeoption2ts(siO, seconds(2.01)), 'a'),
+      DB.event(siO, timeoption2ts(siO, seconds(2.12)), 'C'),
+      DB.event(siO, timeoption2ts(siO, seconds(2.25)), 'D'),
+      DB.event(siO, timeoption2ts(siO, seconds(2.51)), 'a'),
+      DB.event(siO, timeoption2ts(siO, seconds(3.01)), 'a'),
+      DB.event(siO, timeoption2ts(siO, seconds(3.51)), 'a'),
+      DB.event(siO, timeoption2ts(siO, seconds(4.01)), 'a'),
+      DB.event(siO, timeoption2ts(siO, seconds(4.31)), 'E'),
+      DB.event(siO, timeoption2ts(siO, seconds(4.51)), 'a')
+    )
+  )
+})

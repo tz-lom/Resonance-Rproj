@@ -81,7 +81,7 @@ run.online <- function(inputs, blocks, code, returnBlocks=FALSE, env=new.env()){
         onTimer(timer$id, timer$time)
         processQueue()
         if(!timer$singleShot){
-          timers[i, 'time'] <- currentTime + timer$timeout
+          timers[i, 'time'] <<- currentTime + timer$timeout
         }
       }
       currentTime <<- lastTS(x)
