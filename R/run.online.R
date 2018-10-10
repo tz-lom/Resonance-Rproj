@@ -72,23 +72,20 @@ run.online <- function(inputs, blocks, code, returnBlocks=FALSE, env=new.env()){
   lapply(blocks, function(x){
     currentTime <<- lastTS(x)
     # maybe some timers will trigger before this data block
-    if(nrow(timers)>0){
-      toProcess <- which(timers$time<currentTime)
-      toProcess <- toProcess[order(timers$time[toProcess])]
-      for(i in toProcess){
-        timer <- timers[i, ]
-        currentTime <<- timer$time
-        onTimer(timer$id, timer$time)
-        processQueue()
-        if(!timer$singleShot){
-          timers[i, 'time'] <<- currentTime + timer$timeout
-        }
+    while(nrow(timers)>0 && length(toProcess <- which(timers$time<currentTime))>0){
+      toProcess <- toProcess[order(timers$time[toProcess])[1]]
+
+      timer <- timers[toProcess, ]
+      currentTime <<- timer$time
+      onTimer(timer$id, timer$time)
+      processQueue()
+      if(!timer$singleShot){
+        timers[toProcess, 'time'] <<- currentTime + timer$timeout
+      } else {
+        timers <<- timers[-toProcess, ]
       }
+      
       currentTime <<- lastTS(x)
-      toRemove <- which(timers$time<currentTime)
-      if(length(toRemove)>0){
-        timers <<- timers[-toRemove, ]
-      }
     }
     
     onDataBlock(x)

@@ -34,7 +34,7 @@ timeoption2seconds <- function(si, x){
 
 timeoption2ts <- function(si, x){
   if('seconds' %in% class(x)){
-    nanotime(as.numeric(x)*1E9)
+    nanotime(x)
   } else {
     nanotime(x*1E9/si$samplingRate)
   }
@@ -46,7 +46,8 @@ samples <- function(x){
 }
 
 seconds <- function(x){
-  class(x) <- c(class(x), 'seconds')
+  x <- nanotime(ceiling(x*1E3)*1E6)
+  oldClass(x) <- c(oldClass(x), 'seconds')
   x
 }
 
