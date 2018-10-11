@@ -58,6 +58,9 @@ run.online <- function(inputs, blocks, code, returnBlocks=FALSE, env=new.env()){
             singleShot = x$args$singleShot
           ))
       }
+      if(x$cmd == 'stopTimer'){
+        timers <<- timers[timers$id != x$args$id, ]
+      }
     })
   }
   

@@ -1,6 +1,9 @@
 onTimer <- function(id, time){
   id <- which(.execution_plan$timers$id==id)
-  if(length(id)==0) return();
+  if(length(id)==0) {
+    warning("Unknown timer was called")
+    return();
+  }
   timer <- .execution_plan$timers[id, ]
   if(timer$singleShot){
     .execution_plan$timers <- .execution_plan$timers[-id, ]
