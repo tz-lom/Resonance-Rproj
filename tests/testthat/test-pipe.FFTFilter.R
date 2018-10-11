@@ -32,13 +32,12 @@ process = function(){
     out = DB.channels(
       si, 
       timeoption2ts(Csi, 4), 
-      c(0x1.86d3c7a6a0d9dp-3, 0x1.a06ba2efa44f8p-5, 0x1.916a3472b10b3p-5, 
-        0x1.a85a2eae2f866p-5, 0x1.4b6dd9d0f05ccp-3, 0x1.a16ecc4ac1ca1p-4, 
-        0x1.825b628f24fbdp-4, 0x1.10ce97aa181e7p-4, 0x1.307daf9d3068fp-4, 
-        0x1.5e6843ccf725fp-6, 0x1.1ff372399a2a6p-7, 0x1.dbc00872919fdp-4
+      c(0.19083362557658468, 0.050832575068065794, 0.049000837743308295, 0.051800814793282531,
+        0.1618306176078888, 0.10191230584688295, 0.094325432774268345, 0.066603271903211358,
+        0.074338613502755502, 0.021387163363998939, 0.008787565969400439, 0.1161499338132685
         ))
   )
   
   expect_identical(online, offline)
-  expect_identical(reference, online);
+  expect_equal(reference, online, tolerance=1e-15);
 })
