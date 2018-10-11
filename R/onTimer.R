@@ -1,5 +1,6 @@
 onTimer <- function(id, time){
   id <- which(.execution_plan$timers$id==id)
+  if(length(id)==0) return();
   timer <- .execution_plan$timers[id, ]
   if(timer$singleShot){
     .execution_plan$timers <- .execution_plan$timers[-id, ]
@@ -47,7 +48,13 @@ startTimer <- function(timeout, data=TRUE, call='onTimeout', singleShot=TRUE){
         stringsAsFactors = FALSE
       ))
     do.call(addToQueue, list("startTimer", id=timerId, timeout=timeout, singleShot=singleShot))
+    timerId
   } else {
     stop("Can't use startTimer function without run.online context")
   }
+}
+
+stopTimer <- function(timerId){
+  .execution_plan$timers <- .execution_plan$timers[.execution_plan$timers$id != timerId,]
+  addToQueue("stopTimer", id=timerId)
 }

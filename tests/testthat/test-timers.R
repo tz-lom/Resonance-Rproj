@@ -9,16 +9,22 @@ timer_test <- function(start, pass){
     online = function(input, pass, onTimeout=NULL){
       
       for(i in input){
-        args <- list(
-          timeout = 500,
-          singleShot = T,
-          data = TRUE,
-          call = 'onTimeout'
-        )
-        for(n in names(i)){
-          args[[n]] <- i[[n]]
+        if(is.null(i$stop))
+        {
+          args <- list(
+            timeout = 500,
+            singleShot = T,
+            data = TRUE,
+            call = 'onTimeout'
+          )
+          for(n in names(i)){
+            args[[n]] <- i[[n]]
+          }
+          do.call(startTimer, args)
+        } else {
+          stopTimer(i$stop)
         }
-        do.call(startTimer, args)
+          
       }
       
       if(is.null(onTimeout)){
@@ -140,5 +146,42 @@ test_that("Timers can be repeative", {
       DB.event(siO, timeoption2ts(siO, seconds(4.31)), 'E'),
       DB.event(siO, timeoption2ts(siO, seconds(4.51)), 'a')
     )
+  )
+})
+
+test_that("Timers can be canceled", {
+  do_test(
+    list(
+      DB.event(si1, timeoption2ts(si1, seconds(1.01)), list(data='a', singleShot=F)),
+      DB.event(si1, timeoption2ts(si1, seconds(1.03)), list(data='b', singleShot=F)),
+      DB.event(si1, timeoption2ts(si1, seconds(1.06)), list(data='c', singleShot=F)),
+      DB.event(si1, timeoption2ts(si1, seconds(1.07)), list(data='d', timeout=4000)),
+      DB.event(si1, timeoption2ts(si1, seconds(1.21)), list(stop=1)), # stop a
+      DB.event(si1, timeoption2ts(si1, seconds(1.24)), list(stop=1)), # stop a second time
+      DB.event(si2, timeoption2ts(si2, seconds(1.31)), 'A'),
+      DB.event(si2, timeoption2ts(si2, seconds(1.61)), 'B'),
+      DB.event(si1, timeoption2ts(si1, seconds(1.80)), list(stop=2)), # stop b
+      DB.event(si2, timeoption2ts(si2, seconds(2.12)), 'C'),
+      DB.event(si1, timeoption2ts(si1, seconds(2.15)), list(stop=3))  # stop c
+    ),
+    DBcombine(
+      DB.event(siO, timeoption2ts(siO, seconds(1.31)), 'A'),
+      DB.event(siO, timeoption2ts(siO, seconds(1.53)), 'b'),
+      DB.event(siO, timeoption2ts(siO, seconds(1.56)), 'c'),
+      DB.event(siO, timeoption2ts(siO, seconds(1.61)), 'B'),
+      DB.event(siO, timeoption2ts(siO, seconds(2.06)), 'c'),
+      DB.event(siO, timeoption2ts(siO, seconds(2.12)), 'C'),
+      DB.event(siO, timeoption2ts(siO, seconds(5.07)), 'd')
+    )
+  )
+})
+
+test_that("Timers can't be used offline", {
+  blocks = list(
+    DB.event(si1, timeoption2ts(si1, seconds(1.01)), list(data='a', singleShot=F))
+  )
+  expect_error(
+    run.offline(list(si1, si2), blocks, code, env=environment()),
+    "Can't use startTimer function without run.online context"
   )
 })

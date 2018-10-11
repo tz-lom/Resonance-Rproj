@@ -1,4 +1,4 @@
-run.offline <- function(inputs, blocks, code) {
+run.offline <- function(inputs, blocks, code, env=new.env()) {
   
   data <- lapply(inputs, function(si){
     F <- Filter(function(x){
@@ -13,7 +13,6 @@ run.offline <- function(inputs, blocks, code) {
   })
   
   
-  env <- new.env()
   env$input <- function(index){
     if(index>0 && index<=length(data)){
       data[[index]]
