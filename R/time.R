@@ -46,7 +46,7 @@ samples <- function(x){
 }
 
 seconds <- function(x){
-  x <- nanotime(ceiling(x*1E3)*1E6)
+  x <- nanotime(ceiling(x*1E6)*1E3)
   oldClass(x) <- c(oldClass(x), 'seconds')
   x
 }
