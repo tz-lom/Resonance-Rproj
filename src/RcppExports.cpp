@@ -5,17 +5,6 @@
 
 using namespace Rcpp;
 
-// call_hash
-std::string call_hash(SEXP s);
-RcppExport SEXP _Resonance_call_hash(SEXP sSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type s(sSEXP);
-    rcpp_result_gen = Rcpp::wrap(call_hash(s));
-    return rcpp_result_gen;
-END_RCPP
-}
 // forceCopy
 NumericMatrix forceCopy(NumericMatrix m);
 RcppExport SEXP _Resonance_forceCopy(SEXP mSEXP) {
@@ -117,7 +106,6 @@ RcppExport SEXP upfirdn__apply_multichannel(SEXP, SEXP);
 RcppExport SEXP upfirdn__new(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_Resonance_call_hash", (DL_FUNC) &_Resonance_call_hash, 1},
     {"_Resonance_forceCopy", (DL_FUNC) &_Resonance_forceCopy, 1},
     {"_Resonance_shiftRows", (DL_FUNC) &_Resonance_shiftRows, 2},
     {"_Resonance_pushRows_bottom", (DL_FUNC) &_Resonance_pushRows_bottom, 2},
@@ -126,8 +114,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Resonance_rowsCopy", (DL_FUNC) &_Resonance_rowsCopy, 5},
     {"_Resonance_replace_columns_block", (DL_FUNC) &_Resonance_replace_columns_block, 4},
     {"_Resonance_copyColumns", (DL_FUNC) &_Resonance_copyColumns, 3},
-    {"upfirdn__apply_multichannel",      (DL_FUNC) &upfirdn__apply_multichannel,      2},
-    {"upfirdn__new",                     (DL_FUNC) &upfirdn__new,                     3},
+    {"upfirdn__apply_multichannel", (DL_FUNC) &upfirdn__apply_multichannel, 2},
+    {"upfirdn__new",                (DL_FUNC) &upfirdn__new,                3},
     {NULL, NULL, 0}
 };
 
