@@ -9,14 +9,64 @@
 # popQueue
 # onStop()
 
+require(nanotime)
+
 testReport <- list()
 queue <- list()
 
-DB.channels <- function(...){
-  testReport <<- c(testReport, list(list(call='DB.channels', args=list(...))))
+`SI<-` <- function(x, name=NULL, value){
+  if(is.null(name)) {
+    attr(x, '.StreamInfo') <- value
+  } else {
+    attr(x, '.StreamInfo')[[name]] <- value
+  }
+  x
 }
-DB.event <- function(...){
-  testReport <<- c(testReport, list(list(call='DB.event', args=list(...))))
+TS <- function(x){
+  attr(x, 'TS', TRUE)
+}
+`TS<-` <- function(x, value){
+  attr(x, 'TS') <- nanotime(value)
+  x
+}
+
+DB.channels <- function(SI, timestamp, vector){
+  data <- if(is.matrix(vector)) vector else matrix(as.numeric(vector), ncol=SI$channels, byrow = T)
+  if(length(timestamp)==1){
+    TS(data) <- nanotime(seq(to=as.integer64(timestamp), by=1E9/SI$samplingRate, length.out=nrow(data)))
+  } else {
+    TS(data) <- nanotime(timestamp)
+  }
+  SI(data) <- SI
+  data
+}
+
+DB.event <- function(SI, timestamp, message){
+  TS(message) <- nanotime(timestamp)
+  ret <- list(message)
+  SI(ret) <- SI
+  ret
+}
+
+SI.default <- function(id, name){
+  ret <- list()
+  if(!is.null(id)) ret$id <- id
+  if(!is.null(name)) ret$name <- name
+  ret
+}
+
+SI.channels <- function(channels, samplingRate, id=NULL, name=NULL){
+  c(SI.default(id, name),list(
+    type='channels',
+    channels=as.integer(channels),
+    samplingRate=as.numeric(samplingRate)
+  ))
+}
+
+SI.event <- function(id=NULL, name=NULL){
+  c(SI.default(id, name),list(
+    type='event'
+  ))
 }
 
 onPrepare <- function(inputs, code, env=new.env()){
@@ -75,8 +125,8 @@ onDataBlock <- function(block){
   }
   if(attr(block, '.StreamInfo')$id==2)
   {
-    data <- paste(block, "out")
-    attributes(data) <- attributes(block)
+    data <- paste(block[[1]], "out")
+    TS(data) <- TS(block[[1]])
     queue <<- c(
       queue,
       list(
@@ -84,7 +134,7 @@ onDataBlock <- function(block){
           cmd="sendBlockToStream",
           args=list(
             id=2L,
-            data=block
+            data=data
           )
         )
       )
@@ -257,7 +307,7 @@ onStop <- function(){
   
   if(!identical(testReport, expectedReport))
   {
-    print(dump("testReport", file=''))
+    print(dump("testReport", file='', control = c("all", "digits17")))
     stop("Test didn't pass")
   }
   

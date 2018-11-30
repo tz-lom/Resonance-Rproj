@@ -118,24 +118,14 @@ test_that("Processing done in a good way", {
     `event-out` = structure(
       list(
         structure(
-          list(
-            structure(
-              "test", 
-              TS = new(
-                "nanotime", 
-                .S3Class = "integer64",
-                structure(2.2266026824123314e-245, class = "integer64")))),
-          .StreamInfo = list(
-            id = 2,
-            name = "event",
-            type = "event",
-            online = TRUE), 
+          "test out", 
           TS = new(
             "nanotime", 
-            .S3Class = "integer64", 
-            structure(numeric(0), class = "integer64")))),
+            .S3Class = "integer64",
+            structure(2.2266026824123314e-245, class = "integer64")))),
       .StreamInfo = list(
-        type = "event")))
+        type = "event"))
+    )
   
   expect_success({
     expect_identical(
