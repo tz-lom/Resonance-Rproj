@@ -37,14 +37,17 @@
 # }
 # 
 # test_that("linear", {
-#   
+# 
 #   Esi <- SI.event()
+#   
+#   blocks <- list()
+#   
 #   blocks <- list(
 #     DB.event(Esi, timeoption2ts(NULL, seconds(3)), 'A'),
 #     DB.event(Esi, timeoption2ts(NULL, seconds(4)), 'B'),
 #     DB.event(Esi, timeoption2ts(NULL, seconds(5)), 'C')
 #   )
-#   
+# 
 #   code = "
 # process = function(){
 #   a <- input(1)
@@ -53,12 +56,12 @@
 #   d <- plain_op(c[[1]])
 #   createOutput(d, 'out1')
 #   createOutput(c[[2]], 'out2')
-#   
+# 
 #   e <- merge_op(b, d)
 #   createOutput(e, 'out3')
 # }
 #   "
-#   
+# 
 #   code = "
 # process = function(){
 #   a <- input(1)
@@ -67,7 +70,7 @@
 #   createOutput(c, 'out')
 # }
 #   "
-#   
-#   #online <- run.online(list(Esi), blocks, code)
-#   
+# 
+#   online <- run.online(list(Esi), blocks, code)
+# 
 # })

@@ -94,14 +94,14 @@ renderExecutionPlanAsGraph <- function(render=TRUE){
   )
   
   theme <-
-    data.frame(attr = c("layout", "outputorder", "fontname", 
+    data.frame(attr = c("outputorder", "fontname", 
           "fontsize", "shape", "fixedsize", "style", "fillcolor", "color", 
           "fontcolor", "bgcolor", "fontname", "fontsize", "len", "color", 
           "arrowsize"), 
-        value = c("neato", "edgesfirst", "Helvetica", "10", 
+        value = c("edgesfirst", "Helvetica", "10", 
           "box", "false", "filled", "aliceblue", "gray70", "gray50", "white", 
           "Helvetica", "8", "1.5", "gray80", "0.5"), 
-        attr_type = c("graph", 
+        attr_type = c( 
           "graph", "node", "node", "node", "node", "node", "node", "node", 
           "node", "graph", "edge", "edge", "edge", "edge", "edge"),
         stringsAsFactors = FALSE)
@@ -116,8 +116,9 @@ renderExecutionPlanAsGraph <- function(render=TRUE){
     return(graph)
   }
   
-  DiagrammeR::render_graph(
-    graph,
-    layout="tree"
+  dot = DiagrammeR::render_graph(
+    graph
   )
+  #dot$x$diagram = sub('^digraph \\{', "digraph tree {", dot$x$diagram)
+  dot
 }

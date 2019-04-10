@@ -114,8 +114,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Resonance_rowsCopy", (DL_FUNC) &_Resonance_rowsCopy, 5},
     {"_Resonance_replace_columns_block", (DL_FUNC) &_Resonance_replace_columns_block, 4},
     {"_Resonance_copyColumns", (DL_FUNC) &_Resonance_copyColumns, 3},
-    {"upfirdn__apply_multichannel", (DL_FUNC) &upfirdn__apply_multichannel, 2},
-    {"upfirdn__new",                (DL_FUNC) &upfirdn__new,                3},
+    {"upfirdn__apply_multichannel",      (DL_FUNC) &upfirdn__apply_multichannel,      2},
+    {"upfirdn__new",                     (DL_FUNC) &upfirdn__new,                     3},
     {NULL, NULL, 0}
 };
 
