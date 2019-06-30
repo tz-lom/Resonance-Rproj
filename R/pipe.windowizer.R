@@ -12,7 +12,7 @@ pipe.windowizer <- function(input, size, shift){
       env$window <- matrix(as.double(0), ncol=SI(input)$channels, nrow=size)
       env$TS <- double(SI(input)$channels);
       env$unfilled <- size
-      env$stime <- 1E6/SI(input)$samplingRate
+      env$stime <- 1E9/SI(input)$samplingRate
       
       SI.window(channels = SI(input)$channels, samples = size, samplingRate = SI(input)$samplingRate/shift)
     },
@@ -26,7 +26,7 @@ pipe.windowizer <- function(input, size, shift){
           #push first unfilled
           push_slice_rows_back(window, db, nrow(db)-add, unfilled)
           
-          #time <- attr(db, 'TS') - (add-unfilled)*1E6/input$samplingRate
+          #time <- attr(db, 'TS') - (add-unfilled)*1E9/input$samplingRate
 
           block <- window
           #attr(block, 'TS') <- attr(db, 'TS')[1:size + nrow(db)-add + unfilled - size]

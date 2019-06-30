@@ -9,7 +9,7 @@ source.channeledEvents <- function(evData, samplingRate){
   
   blocks <- lapply(pos, function(t){
     ret <- evData[[t+1]]
-    attr(ret, 'TS') <- (t+1)*1E6/samplingRate
+    attr(ret, 'TS') <- (t+1)*1E9/samplingRate
     ret
   })
   

@@ -5,9 +5,9 @@
 #   
 #   blocks <- list(
 #     DB.channels(Csi, 3, rep(1, 100)),
-#     DB.channels(Csi, 3+1E6, rep(1, 100)),
-#     DB.event(Esi, 2+1E6, '{"p": 4}'),
-#     DB.channels(Csi, 3+2E6, rep(1, 100))
+#     DB.channels(Csi, 3+1E9, rep(1, 100)),
+#     DB.event(Esi, 2+1E9, '{"p": 4}'),
+#     DB.channels(Csi, 3+2E9, rep(1, 100))
 #   )
 #   
 #   code <- "
